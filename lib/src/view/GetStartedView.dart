@@ -1,4 +1,5 @@
 import 'package:disaster_relief_coordination/src/helpers/SvgHelpers.dart';
+import 'package:disaster_relief_coordination/src/view/DashboardView.dart';
 import 'package:disaster_relief_coordination/src/widgets/CustomButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,9 @@ class GetStartedView extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(screenWidth * 0.10),
               child: CustomButton(hintText: 'Get Started', fontFamily: 'GoogleSansCode', fontSize: 20, fontWeight: FontWeight.w700, onPressed: (){
-
+                Navigator.pushReplacement(context,  MaterialPageRoute(builder: (context) {
+                  return DashboardView();
+                }));
               }, width: screenWidth * 0.8, height: screenHeight * 0.07,),
             ),
           ],
