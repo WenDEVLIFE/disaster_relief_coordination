@@ -1,6 +1,8 @@
+import 'package:disaster_relief_coordination/src/helpers/SvgHelpers.dart';
 import 'package:disaster_relief_coordination/src/widgets/CustomButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../helpers/ColorHelpers.dart';
 import '../helpers/ImageHelper.dart';
@@ -22,12 +24,16 @@ class GetStartedView extends StatelessWidget {
           children: [
             Container(
               width: screenWidth * 0.9,
-              height: screenHeight * 0.3,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(ImageHelper.logoPath),
-                  fit: BoxFit.cover,
+              height: screenHeight * 0.4,
+              child: SvgPicture.asset(
+                SvgHelpers.heart1,
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                  ColorHelpers.primaryColor,
+                  BlendMode.srcIn,
                 ),
+                width: screenWidth * 0.9,
+                height: screenHeight * 0.3,
               ),
             ),
             Padding(
