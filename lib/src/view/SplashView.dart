@@ -50,14 +50,14 @@ class _SplashViewState extends State<SplashView> {
                 ),
               ),
             ),
-            SizedBox(height: screenHeight * 0.02),
+            SizedBox(height: screenHeight * 0.05),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
               child:   CustomText(text: 'Disaster Relief Coordination',
-                  fontFamily: 'Anton',
+                  fontFamily: 'GoogleSansCode',
                   fontSize: 30.0,
-                  color: ColorHelpers.primaryColor,
-                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
                   textAlign:  TextAlign.center
               ),
             ),

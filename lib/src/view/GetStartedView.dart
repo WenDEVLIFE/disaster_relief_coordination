@@ -1,29 +1,60 @@
+import 'package:disaster_relief_coordination/src/widgets/CustomButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../helpers/ColorHelpers.dart';
+import '../helpers/ImageHelper.dart';
+import '../widgets/CustomText.dart';
 
 class GetStartedView extends StatelessWidget {
   const GetStartedView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Get Started'),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Welcome to the Get Started View!',
-              style: TextStyle(fontSize: 24),
+            Container(
+              width: screenWidth * 0.9,
+              height: screenHeight * 0.3,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(ImageHelper.logoPath),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to the next view or perform an action
-              },
-              child: const Text('Next'),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+              child:   CustomText(text: 'Disaster Relief Coordination',
+                  fontFamily: 'GoogleSansCode',
+                  fontSize: 30.0,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                  textAlign:  TextAlign.center
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(screenWidth * 0.10),
+              child:     CustomText(text: 'Coordinate disaster response efforts and distribute essential resources',
+                  fontFamily: 'GoogleSansCode',
+                  fontSize: 25.0,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                  textAlign:  TextAlign.center
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(screenWidth * 0.10),
+              child: CustomButton(hintText: 'Get Started', fontFamily: 'GoogleSansCode', fontSize: 20, fontWeight: FontWeight.w700, onPressed: (){
+
+              }, width: screenWidth * 0.8, height: screenHeight * 0.07,),
             ),
           ],
         ),

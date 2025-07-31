@@ -37,3 +37,14 @@ flutter:
       - assets/image/
       - assets/ico/
       - assets/fonts/
+
+
+  fonts:
+    - family: GoogleSansCode
+      fonts:
+          - asset: assets/fonts/GoogleSansCode-Regular.ttf
+            weight: 400
+          - asset: assets/fonts/GoogleSansCode-Bold.ttf
+            weight: 700
+
+
