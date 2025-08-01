@@ -42,19 +42,6 @@ class DashboardView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                PanelWidget(label: 'Request Help', svgPath: SvgHelpers.hand, onTap: (){
-
-                },),
-                SizedBox(width: screenWidth * 0.05), // Spacing between panels
-                PanelWidget(label: 'Report Incident', svgPath: SvgHelpers.alert, onTap: (){
-
-                },),
-              ],
-            ),
-            SizedBox(width: screenWidth * 0.10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
                 PanelWidget(label: 'My Status', svgPath: SvgHelpers.person, onTap: (){
 
                 },),
