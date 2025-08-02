@@ -1,3 +1,4 @@
+import 'package:disaster_relief_coordination/src/helpers/SvgHelpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -9,13 +10,13 @@ class MenuItem {
 
 class MenuListWidget extends StatelessWidget {
   final List<MenuItem> menuItems = [
-    MenuItem(svgPath: 'assets/icons/user_info.svg', title: 'Profile'),
-    MenuItem(svgPath: 'assets/icons/change_password.svg', title: 'Notifications'),
-    MenuItem(svgPath: 'assets/icons/terms.svg', title: 'Privacy & Security'),
-    MenuItem(svgPath: 'assets/icons/privacy.svg', title: 'Emergency Contacts'),
-    MenuItem(svgPath: 'assets/icons/about.svg', title: 'Language'),
-    MenuItem(svgPath: 'assets/icons/subscription.svg', title: 'About'),
-    MenuItem(svgPath: 'assets/icons/logout.svg', title: 'Logout'),
+    MenuItem(svgPath: SvgHelpers.person, title: 'Profile'),
+    MenuItem(svgPath: SvgHelpers.notification, title: 'Notifications'),
+    MenuItem(svgPath: SvgHelpers.privacy, title: 'Privacy & Security'),
+    MenuItem(svgPath: SvgHelpers.emergencyContacts, title: 'Emergency Contacts'),
+    MenuItem(svgPath: SvgHelpers.language, title: 'Language'),
+    MenuItem(svgPath: SvgHelpers.aboutUs, title: 'About'),
+    MenuItem(svgPath: SvgHelpers.logout, title: 'Logout'),
   ];
 
   @override
@@ -27,36 +28,24 @@ class MenuListWidget extends StatelessWidget {
             itemCount: menuItems.length,
             itemBuilder: (context, index) {
               return ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 leading: SvgPicture.asset(
                   menuItems[index].svgPath,
-                  width: 22,
-                  height: 22,
+                  width: 44,
+                  height: 44,
                   color: Colors.black,
                 ),
                 title: Text(
                   menuItems[index].title,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 20,
                     fontFamily: 'SmoochSans',
                     fontWeight: FontWeight.w600,
                   ),
                 ),
+                trailing: const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 22),
                 onTap: () {
-                  if (index == 0) {
-
-                  } else if (index == 1) {
-
-                  } else if (index == 2) {
-
-                  } else if (index == 3) {
-
-                  } else if (index == 4) {
-
-                  } else if (index == 5) {
-
-                  } else if (index == 6) {
-
-                  }
+                  // Handle taps here
                 },
               );
             },
