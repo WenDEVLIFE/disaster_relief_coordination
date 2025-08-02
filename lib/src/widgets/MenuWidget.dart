@@ -9,6 +9,9 @@ class MenuItem {
 }
 
 class MenuListWidget extends StatelessWidget {
+
+   MenuListWidget({super.key});
+
   final List<MenuItem> menuItems = [
     MenuItem(svgPath: SvgHelpers.person, title: 'Profile'),
     MenuItem(svgPath: SvgHelpers.notification, title: 'Notifications'),
@@ -18,6 +21,8 @@ class MenuListWidget extends StatelessWidget {
     MenuItem(svgPath: SvgHelpers.aboutUs, title: 'About'),
     MenuItem(svgPath: SvgHelpers.logout, title: 'Logout'),
   ];
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +38,10 @@ class MenuListWidget extends StatelessWidget {
                   menuItems[index].svgPath,
                   width: 44,
                   height: 44,
-                  color: Colors.black,
+                  colorFilter:  ColorFilter.mode(
+                    Colors.black,
+                    BlendMode.srcIn,
+                  ),
                 ),
                 title: Text(
                   menuItems[index].title,

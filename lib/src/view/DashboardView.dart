@@ -2,7 +2,6 @@ import 'package:disaster_relief_coordination/src/helpers/ColorHelpers.dart';
 import 'package:disaster_relief_coordination/src/helpers/SvgHelpers.dart';
 import 'package:disaster_relief_coordination/src/widgets/CustomText.dart';
 import 'package:disaster_relief_coordination/src/widgets/PanelWidget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'MyStatusView.dart';
@@ -16,7 +15,7 @@ class DashboardView extends StatelessWidget {
   Widget build(BuildContext context) {
 
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+    //double screenHeight = MediaQuery.of(context).size.height;
 
 
     return Scaffold(

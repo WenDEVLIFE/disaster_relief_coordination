@@ -1,5 +1,4 @@
 import 'package:disaster_relief_coordination/src/widgets/CustomText.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -11,11 +10,11 @@ class PanelWidget extends StatelessWidget {
   final VoidCallback? onTap;
 
   const PanelWidget({
-    Key? key,
+    super.key,
     required this.label,
     required this.svgPath,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +32,7 @@ class PanelWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(15.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               spreadRadius: 2,
               blurRadius: 5,
               offset: Offset(0, 3),
