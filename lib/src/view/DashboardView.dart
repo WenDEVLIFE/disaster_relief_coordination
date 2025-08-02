@@ -5,6 +5,8 @@ import 'package:disaster_relief_coordination/src/widgets/PanelWidget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'SettingView.dart';
+
 class DashboardView extends StatelessWidget {
 
   const DashboardView({Key? key}) : super(key: key);
@@ -47,6 +49,9 @@ class DashboardView extends StatelessWidget {
                 },),
                 SizedBox(width: screenWidth * 0.05), // Spacing between panels
                 PanelWidget(label: 'Settings', svgPath: SvgHelpers.settings, onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const SettingView();
+                  }));
 
                 },),
               ],

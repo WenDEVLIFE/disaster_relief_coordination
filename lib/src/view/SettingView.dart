@@ -1,5 +1,8 @@
+import 'package:disaster_relief_coordination/src/widgets/CustomText.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../helpers/ColorHelpers.dart';
 
 class SettingView extends StatelessWidget {
   const SettingView({Key? key}) : super(key: key);
@@ -11,7 +14,8 @@ class SettingView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          backgroundColor: ColorHelpers.primaryColor,
+        title: const CustomText(text: 'Settings', fontFamily: 'GoogleSansCode', fontSize: 30, color: Colors.white, fontWeight: FontWeight.w700, textAlign: TextAlign.center)
       ),
       body: Center(
         child: Text('Settings Page', style: TextStyle(fontSize: 20)),
