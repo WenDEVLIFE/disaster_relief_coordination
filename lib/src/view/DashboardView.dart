@@ -5,6 +5,7 @@ import 'package:disaster_relief_coordination/src/widgets/PanelWidget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'MyStatusView.dart';
 import 'SettingView.dart';
 
 class DashboardView extends StatelessWidget {
@@ -45,6 +46,9 @@ class DashboardView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 PanelWidget(label: 'My Status', svgPath: SvgHelpers.person, onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const MyStatusView();
+                  }));
 
                 },),
                 SizedBox(width: screenWidth * 0.05), // Spacing between panels
