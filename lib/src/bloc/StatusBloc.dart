@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../model/PersonModel.dart';
+
 abstract class StatusEvent extends Equatable {
   const StatusEvent();
 
@@ -22,6 +24,15 @@ class StatusUpdateEvent extends StatusEvent {
 
   @override
   List<Object> get props => [status];
+}
+
+abstract class PersonEvent {}
+
+class LoadPersons extends PersonEvent {}
+
+class PersonState {
+  final List<PersonModel> people;
+  PersonState(this.people);
 }
 
 class StatusBloc extends Bloc<StatusEvent, String> {

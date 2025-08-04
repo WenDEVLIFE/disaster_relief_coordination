@@ -1,14 +1,30 @@
 import 'package:disaster_relief_coordination/src/helpers/SvgHelpers.dart';
 import 'package:disaster_relief_coordination/src/widgets/CustomButton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../bloc/PersonBloc.dart';
 import '../helpers/ColorHelpers.dart';
-import '../helpers/ImageHelper.dart';
 import '../widgets/CustomText.dart';
 
-class MyStatusView extends StatelessWidget {
+class MyStatusView extends StatefulWidget {
   const MyStatusView({super.key});
+
+
+  @override
+  StateView createState() => StateView();
+
+}
+
+  class StateView extends State<MyStatusView> {
+
+  @override
+  void initState(){
+    super.initState();
+
+    context.read<PersonBloc>().add(const LoadPersons());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,9 +113,29 @@ class MyStatusView extends StatelessWidget {
               child: Center(
                 child: Column(
                   children: [
+                    Expanded(
+                      child: BlocBuilder<PersonBloc, PersonState>(
+                        builder: (context, state) {
+                          return ListView.builder(
+                            itemCount: state.people.length,
+                            itemBuilder: (context, index) {
+                              final person = state.people[index];
+                              return Card(
+                                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                child: ListTile(
+                                  title: Text(person.name),
+                                  subtitle: Text('Status: ${person.status}'),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
                     CustomButton(hintText: 'Update Status', fontFamily: 'GoogleSansCode', fontSize: 20, fontWeight: FontWeight.w700, onPressed: (){
 
                     }, width: screenWidth * 0.8, height: screenHeight * 0.07,),
+                    SizedBox(height: screenHeight * 0.09,)
                   ],
                 ),
               )

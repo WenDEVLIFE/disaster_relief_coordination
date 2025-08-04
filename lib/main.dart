@@ -1,4 +1,5 @@
 import 'package:disaster_relief_coordination/src/bloc/LoginBloc.dart';
+import 'package:disaster_relief_coordination/src/bloc/PersonBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/StatusBloc.dart';
 import 'package:disaster_relief_coordination/src/view/SplashView.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,9 @@ class MyApp extends StatelessWidget {
   ),
     BlocProvider<StatusBloc>(
         create: (context) => StatusBloc()
+    ),
+    BlocProvider<PersonBloc>  (
+        create: (context) => PersonBloc()
     ),
   ],
   child:  MaterialApp(
