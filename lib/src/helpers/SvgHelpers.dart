@@ -14,4 +14,8 @@ class SvgHelpers {
   static const String emergencyContacts = 'assets/ico/notebook_tabs.svg';
   static const String safe = 'assets/ico/check.svg';
   static const String unsafe = 'assets/ico/notsafe.svg';
+  static const String sunny = 'assets/ico/sun.svg';
+  static const String thunderstorm = 'assets/ico/zap.svg';
+  static const String rain = 'assets/ico/cloud_hail.svg';
+  static const String construction = 'assets/ico/construction.svg';
 }

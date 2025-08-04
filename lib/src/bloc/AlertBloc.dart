@@ -1,62 +1,85 @@
+import 'package:disaster_relief_coordination/src/model/AlertModel.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class AlertEvent extends Equatable {
-  const AlertEvent();
+abstract class AlertEvents extends Equatable {
+  const AlertEvents();
 
   @override
   List<Object> get props => [];
 }
 
-class FetchAlerts extends AlertEvent {
-  const FetchAlerts();
-
-  @override
-  List<Object> get props => [];
+class LoadAlerts extends AlertEvents {
+  const LoadAlerts();
 }
 
-class AddAlert extends AlertEvent {
-  final String alert;
+class AlertState extends AlertEvents {
+  final List<AlertModel> alerts;
 
-  const AddAlert(this.alert);
+  const AlertState(this.alerts);
 
   @override
-  List<Object> get props => [alert];
+  List<Object> get props => [alerts];
 }
 
-class RemoveAlert extends AlertEvent {
-  final String alert;
+class AlertBloc extends Bloc<AlertEvents, AlertState> {
 
-  const RemoveAlert(this.alert);
+  AlertBloc() : super(const AlertState([])) {
+    on<AlertEvents>((event, emit) {
+      // Replace with your actual data source
+      emit(AlertState([
+        AlertModel(
+          id : '1',
+          alertname: 'Flood Alert',
+          description: 'Heavy rainfall expected in the area.',
+          status: 'Active',
+          address: '123 Main St, City',
+          timestamp: '2023-10-01 12:00',
+          disasterType: 'Flood',
+        ),
 
-  @override
-  List<Object> get props => [alert];
-}
+        AlertModel(
+          id : '2',
+          alertname: 'Earthquake Alert',
+          description: 'Seismic activity detected.',
+          status: 'Active',
+          address: '456 Elm St, City',
+          timestamp: '2023-10-01 14:00',
+          disasterType: 'Earthquake',
+        ),
 
-class ClearAlerts extends AlertEvent {
-  const ClearAlerts();
+        AlertModel(
+          id : '3',
+          alertname: 'Wildfire Alert',
+          description: 'Wildfire reported in the area.',
+          status: 'Active',
+          address: '789 Oak St, City',
+          timestamp: '2023-10-01 16:00',
+          disasterType: 'Wildfire',
+        ),
 
-  @override
-  List<Object> get props => [];
-}
+        AlertModel(
+          id : '4',
+          alertname: 'Tornado Alert',
+          description: 'Tornado warning issued for the area.',
+          status: 'Active',
+          address: '101 Pine St, City',
+          timestamp: '2023-10-01 18:00',
+          disasterType: 'Tornado',
+        ),
 
+        AlertModel(
+          id : '5',
+          alertname: 'Hurricane Alert',
+          description: 'Hurricane approaching the coast.',
+          status: 'Active',
+          address: '202 Maple St, City',
+          timestamp: '2023-10-01 20:00',
+          disasterType: 'Hurricane',
+        ),
 
-class UpdateAlert extends AlertEvent {
-  final String oldAlert;
-  final String newAlert;
-
-  const UpdateAlert(this.oldAlert, this.newAlert);
-
-  @override
-  List<Object> get props => [oldAlert, newAlert];
-}
-
-
-class AlertBloc extends Bloc<AlertEvent, List<String>> {
-  AlertBloc() : super([]);
-
-  @override
-  Stream<List<String>> mapEventToState(AlertEvent event) async* {
-
+      ]));
+    });
   }
+
 }
