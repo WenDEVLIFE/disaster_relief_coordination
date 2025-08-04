@@ -11,17 +11,16 @@ class SettingView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        backgroundColor: ColorHelpers.primaryColor,
         title: const CustomText(
           text: 'Settings',
           fontFamily: 'GoogleSansCode',
           fontSize: 30,
-          color: Colors.white,
+          color: Colors.black,
           fontWeight: FontWeight.w700,
           textAlign: TextAlign.center,
         ),
