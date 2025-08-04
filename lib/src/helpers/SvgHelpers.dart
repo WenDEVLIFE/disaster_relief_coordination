@@ -12,4 +12,6 @@ class SvgHelpers {
   static const String privacy = 'assets/ico/earthlock.svg';
   static const String logout = 'assets/ico/logout.svg';
   static const String emergencyContacts = 'assets/ico/notebook_tabs.svg';
+  static const String safe = 'assets/ico/check.svg';
+  static const String unsafe = 'assets/ico/notsafe.svg';
 }

@@ -42,9 +42,9 @@ class MyStatusView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const CustomText(
-                      text: 'Your Current Status',
+                      text: 'I am safe',
                       fontFamily: 'GoogleSansCode',
-                      fontSize: 24,
+                      fontSize: 30,
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                       textAlign: TextAlign.center,
