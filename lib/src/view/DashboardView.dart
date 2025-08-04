@@ -20,8 +20,7 @@ class DashboardView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: ColorHelpers.primaryColor,
-        title: const CustomText(text: 'Home', fontFamily: 'GoogleSansCode', fontSize: 30, color: Colors.white, fontWeight: FontWeight.w700, textAlign: TextAlign.center)
+        title: const CustomText(text: 'Home', fontFamily: 'GoogleSansCode', fontSize: 30, color: Colors.black, fontWeight: FontWeight.w700, textAlign: TextAlign.center)
       ),
       body: SingleChildScrollView(
         child: Column(

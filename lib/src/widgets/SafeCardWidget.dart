@@ -1,3 +1,5 @@
+import 'package:disaster_relief_coordination/src/helpers/ColorHelpers.dart';
+import 'package:disaster_relief_coordination/src/widgets/CircleWidget.dart';
 import 'package:flutter/material.dart';
 import '../helpers/ImageHelper.dart';
 import '../model/PersonModel.dart';
@@ -27,6 +29,9 @@ class SafeCardWidget extends StatelessWidget {
         ),
         subtitle:Row(
           children: [
+            CircleWidget(radius: 10, color: person.status == 'Safe' ? ColorHelpers.safeColor : ColorHelpers.safeColor
+            ),
+            SizedBox(width: 8),
             CustomText(
               text: person.status,
               fontFamily: 'GoogleSansCode',
