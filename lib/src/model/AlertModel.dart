@@ -5,6 +5,7 @@ class AlertModel {
   final String status;
   final String address;
   final String timestamp;
+  final String disasterType;
 
   AlertModel({
     required this.id,
@@ -13,6 +14,7 @@ class AlertModel {
     required this.status,
     required this.address,
     required this.timestamp,
+    required this.disasterType,
   });
 
 
