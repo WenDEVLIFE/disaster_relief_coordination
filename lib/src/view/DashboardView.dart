@@ -1,5 +1,6 @@
 import 'package:disaster_relief_coordination/src/helpers/ColorHelpers.dart';
 import 'package:disaster_relief_coordination/src/helpers/SvgHelpers.dart';
+import 'package:disaster_relief_coordination/src/view/AlertView.dart';
 import 'package:disaster_relief_coordination/src/widgets/CustomText.dart';
 import 'package:disaster_relief_coordination/src/widgets/PanelWidget.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,10 @@ class DashboardView extends StatelessWidget {
               children: [
                 PanelWidget(label: 'Alerts & Warnings', svgPath: SvgHelpers.alert, onTap: (){
                  print('Alerts & Warnings tapped');
+
+                 Navigator.push(context, MaterialPageRoute(builder: (context) {
+                   return const AlertView();
+                 }));
                 },),
                 SizedBox(width: screenWidth * 0.05), // Spacing between panels
                 PanelWidget(label: 'Relief Centers', svgPath: SvgHelpers.mapin, onTap: (){
