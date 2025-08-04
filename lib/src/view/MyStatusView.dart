@@ -63,7 +63,7 @@ class MyStatusView extends StatefulWidget {
                   bottomRight: Radius.circular(20),
                 ),
               ),
-              width: screenWidth,
+              width: screenWidth *0.9,
               height: screenHeight * 0.3,
               child: Center(
                 child: Column(
