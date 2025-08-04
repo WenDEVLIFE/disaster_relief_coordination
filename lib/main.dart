@@ -1,4 +1,5 @@
 import 'package:disaster_relief_coordination/src/bloc/LoginBloc.dart';
+import 'package:disaster_relief_coordination/src/bloc/StatusBloc.dart';
 import 'package:disaster_relief_coordination/src/view/SplashView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,6 +19,9 @@ class MyApp extends StatelessWidget {
   BlocProvider<LoginBloc>(
   create: (context) => LoginBloc()
   ),
+    BlocProvider<StatusBloc>(
+        create: (context) => StatusBloc()
+    ),
   ],
   child:  MaterialApp(
   title: 'E-Diary Cakes',

@@ -1,6 +1,5 @@
 import 'package:disaster_relief_coordination/src/widgets/CustomText.dart';
 import 'package:flutter/material.dart';
-import '../helpers/ColorHelpers.dart';
 import '../widgets/MenuWidget.dart';
 
 class SettingView extends StatelessWidget {
