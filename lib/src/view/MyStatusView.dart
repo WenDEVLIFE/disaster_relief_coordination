@@ -8,6 +8,10 @@ class MyStatusView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -26,10 +30,49 @@ class MyStatusView extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
       ),
-      body: Center(
-        child: Text(
-          'My Status View',
-        ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              width: screenWidth,
+              height: screenHeight * 0.3,
+              color: Colors.green,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CustomText(
+                      text: 'Your Current Status',
+                      fontFamily: 'GoogleSansCode',
+                      fontSize: 24,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 20),
+                    const CustomText(
+                      text: 'Last updated: 2023-10-01',
+                      fontFamily: 'GoogleSansCode',
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              )
+            ),
+          ),
+          Expanded(
+            child: Container(
+              width: screenWidth,
+              height: screenHeight * 0.7,
+              color: Colors.white,
+              child: SingleChildScrollView(
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
