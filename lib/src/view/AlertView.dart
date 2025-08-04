@@ -20,7 +20,7 @@ class StateView extends State<AlertView> {
           },
         ),
         title: const Text(
-          'Alert',
+          'Alerts',
           style: TextStyle(
             fontFamily: 'GoogleSansCode',
             fontSize: 30,

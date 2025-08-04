@@ -1,3 +1,4 @@
+import 'package:disaster_relief_coordination/src/bloc/AlertBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/LoginBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/PersonBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/StatusBloc.dart';
@@ -25,6 +26,9 @@ class MyApp extends StatelessWidget {
     ),
     BlocProvider<PersonBloc>  (
         create: (context) => PersonBloc()
+    ),
+    BlocProvider<AlertBloc>  (
+        create: (context) => AlertBloc()
     ),
   ],
   child:  MaterialApp(
