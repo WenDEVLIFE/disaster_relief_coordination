@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import '../bloc/PersonBloc.dart';
 import '../helpers/ColorHelpers.dart';
 import '../widgets/CustomText.dart';
+import '../widgets/SafeCardWidget.dart';
 
 class MyStatusView extends StatefulWidget {
   const MyStatusView({super.key});
@@ -120,13 +121,7 @@ class MyStatusView extends StatefulWidget {
                             itemCount: state.people.length,
                             itemBuilder: (context, index) {
                               final person = state.people[index];
-                              return Card(
-                                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                                child: ListTile(
-                                  title: Text(person.name),
-                                  subtitle: Text('Status: ${person.status}'),
-                                ),
-                              );
+                              return SafeCardWidget(person: person);
                             },
                           );
                         },
