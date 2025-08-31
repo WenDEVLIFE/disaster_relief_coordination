@@ -2,11 +2,14 @@ import 'package:disaster_relief_coordination/src/bloc/AlertBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/LoginBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/PersonBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/StatusBloc.dart';
+import 'package:disaster_relief_coordination/src/services/FirebaseServices.dart';
 import 'package:disaster_relief_coordination/src/view/SplashView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await FirebaseServices.run();
   runApp(const MyApp());
 }
 
