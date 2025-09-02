@@ -1,3 +1,4 @@
+import 'package:disaster_relief_coordination/src/helpers/SessionHelper.dart';
 import 'package:disaster_relief_coordination/src/view/GetStartedView.dart';
 import 'package:disaster_relief_coordination/src/view/LoginView.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,6 +18,7 @@ class SplashView extends StatefulWidget {
 class _SplashViewState extends State<SplashView> {
 
   bool isLoading = true;
+  final SessionHelpers sessionHelpers = SessionHelpers();
 
   void initState() {
     super.initState();
@@ -25,10 +27,17 @@ class _SplashViewState extends State<SplashView> {
       setState(() {
         isLoading = false;
       });
-      // Navigate to the next screen or perform any action after loading
-      Navigator.pushReplacement(context,  MaterialPageRoute(builder: (context) {
-        return LoginView();
-      }));
+
+      var session = sessionHelpers.getUserInfo();
+      if (session != null) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+          return GetStartedView();
+        }));
+      } else {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+          return LoginView();
+        }));
+      }
     });
   }
 

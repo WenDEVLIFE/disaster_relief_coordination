@@ -1,3 +1,4 @@
+import 'package:disaster_relief_coordination/src/helpers/SessionHelper.dart';
 import 'package:disaster_relief_coordination/src/repository/LoginRepository.dart';
 import 'package:disaster_relief_coordination/src/repository/RegisterRepository.dart';
 import 'package:disaster_relief_coordination/src/view/GetStartedView.dart';
@@ -26,6 +27,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final LoginRepositoryImpl loginRepository = LoginRepositoryImpl();
+  final SessionHelpers sessionHelpers = SessionHelpers();
 
   void login(BuildContext context) async{
     final email = emailController.text;
@@ -46,6 +48,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       String role = userData['Role'].toString();
       String fullName = userData['FUllName'].toString();
       String uid = userData['Uid'].toString();
+
+      // save the session
+      sessionHelpers.saveUserInfo({'email': email, 'role': role, 'fullName': fullName, 'uid': uid});
+
+      // navigate to next page
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => GetStartedView()));
     } else {
       // Show error message
