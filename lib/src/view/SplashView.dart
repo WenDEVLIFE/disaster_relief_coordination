@@ -1,4 +1,5 @@
 import 'package:disaster_relief_coordination/src/view/GetStartedView.dart';
+import 'package:disaster_relief_coordination/src/view/LoginView.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../helpers/ColorHelpers.dart';
@@ -26,7 +27,7 @@ class _SplashViewState extends State<SplashView> {
       });
       // Navigate to the next screen or perform any action after loading
       Navigator.pushReplacement(context,  MaterialPageRoute(builder: (context) {
-        return GetStartedView();
+        return LoginView();
       }));
     });
   }
