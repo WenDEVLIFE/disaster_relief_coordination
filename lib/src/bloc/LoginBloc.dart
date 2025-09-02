@@ -1,7 +1,9 @@
 import 'package:disaster_relief_coordination/src/repository/LoginRepository.dart';
 import 'package:disaster_relief_coordination/src/repository/RegisterRepository.dart';
+import 'package:disaster_relief_coordination/src/view/GetStartedView.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class LoginEvent extends Equatable {
@@ -35,15 +37,19 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       return;
     }
 
-    bool isLoggedIn = await loginRepository.loginUser(email, password);
+    var  userData = await loginRepository.loginUser(email, password);
 
-    if (isLoggedIn) {
-      // Navigate to the next screen or show success message
-      print('Login successful');
-
+    if (userData != null) {
+      // Login successful, navigate to the next screen
+      print('Login successful: $userData');
+      String email = userData['Email'].toString();
+      String role = userData['Role'].toString();
+      String fullName = userData['FUllName'].toString();
+      String uid = userData['Uid'].toString();
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => GetStartedView()));
     } else {
       // Show error message
-      print('Login failed. Please check your credentials.');
+      print('Login failed');
     }
   }
 }
