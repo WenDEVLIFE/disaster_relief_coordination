@@ -4,8 +4,9 @@ import 'package:disaster_relief_coordination/src/widgets/CustomOutlineTextField.
 import 'package:disaster_relief_coordination/src/widgets/CustomText.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import '../widgets/CustomOutlinePasswordField.dart';
+import 'RegisterView.dart';
+
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -61,6 +62,18 @@ class _LoginViewState extends State<LoginView> {
               child:  CustomButton(hintText: 'LOGIN', fontFamily: 'Roboto', fontSize: 20, fontWeight: FontWeight.w700, onPressed: (){
 
               }, width: screenWidth * 0.8, height: screenHeight * 0.05 ),
+            ),
+
+            Padding(padding: EdgeInsets.all(16.0),
+              child:  GestureDetector(
+                onTap: (){
+                  // Navigate to forgot password screen
+                  Navigator.push(context,  MaterialPageRoute(builder: (context) {
+                    return RegisterView();
+                  }));
+                },
+                child: CustomText(text: "Don't have an account? Click me to register", fontFamily: 'Roboto', fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w700, textAlign: TextAlign.center),
+              ),
             ),
           ],
         )
