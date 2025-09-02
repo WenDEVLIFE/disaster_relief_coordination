@@ -10,7 +10,7 @@ class FirebaseServices {
       options: FirebaseOptions(
         apiKey:'AIzaSyAb31M31facZNr6ERw1rwO62bqOPGAaaVs',
         appId: Platform.isIOS
-            ?  '1:864372409166:ios:818f00c0a7c0fc2a8e541f'
+            ? '1:864372409166:ios:818f00c0a7c0fc2a8e541f'
             : '1:864372409166:android:b7a4e1d0861c821b8e541f',
         messagingSenderId: '864372409166',
         projectId: 'disasterdb-f381f',

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:disaster_relief_coordination/src/bloc/AlertBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/LoginBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/PersonBloc.dart';
@@ -50,5 +51,6 @@ class MyApp extends StatelessWidget {
   )
   );
   }
+
 }
 

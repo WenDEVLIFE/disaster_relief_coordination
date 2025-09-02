@@ -1,3 +1,4 @@
+import 'package:disaster_relief_coordination/src/repository/RegisterRepository.dart';
 import 'package:disaster_relief_coordination/src/services/GmailService.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,6 +25,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController otpController = TextEditingController();
   String otpCode = '';
+  final RegisterRepositoryImpl _registerRepository = RegisterRepositoryImpl();
 
   // This will register the user after validating the inputs
   Future <void> register(BuildContext context) async {
@@ -73,7 +75,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       );
       return;
     }
-
     if(email.contains(' ')){
       print('Email should not contain spaces');
       Fluttertoast.showToast(
@@ -100,6 +101,26 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       );
       return;
     }
+
+    try{
+      await _registerRepository.registerUser(email, password, name);
+      emailController.clear();
+      passwordController.clear();
+      confirmPasswordController.clear();
+      nameController.clear();
+      otpController.clear();
+    } catch (e) {
+      print('Registration failed: $e');
+      Fluttertoast.showToast(
+        msg: "Registration failed. Please try again.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: CupertinoColors.systemRed,
+        textColor: CupertinoColors.white,
+        fontSize: 16.0,
+      );
+    }
   }
 
   // generate the codes
@@ -112,7 +133,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   // this will send the code
   Future<void> sendCode (BuildContext context) async{
 
-     otpCode = await generateCode();
+    otpCode = await generateCode();
     String email = emailController.text.trim();
 
     try {

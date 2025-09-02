@@ -54,16 +54,16 @@ class _RegisterViewState extends State<RegisterView> {
                 ),
               ),
               Padding(padding: EdgeInsets.all(16.0),
-                child: CustomOutlineTextField(hintext: 'Full Name', controller: controller),
+                child: CustomOutlineTextField(hintext: 'Full Name', controller: registerBloc.nameController),
               ),
               Padding(padding: EdgeInsets.all(16.0),
-                child: CustomOutlineTextField(hintext: 'Email', controller: controller),
+                child: CustomOutlineTextField(hintext: 'Email', controller: registerBloc.emailController),
               ),
               Padding(padding: EdgeInsets.all(16.0),
-                child: CustomOutlinePassField(hintext: 'Password', controller: controller),
+                child: CustomOutlinePassField(hintext: 'Password', controller: registerBloc.passwordController),
               ),
               Padding(padding: EdgeInsets.all(16.0),
-                child: CustomOutlinePassField(hintext: 'Confirm Password', controller: controller),
+                child: CustomOutlinePassField(hintext: 'Confirm Password', controller: registerBloc.confirmPasswordController),
               ),
               Padding(padding: EdgeInsets.all(16.0),
                 child:  CustomButton(hintText: 'Register', fontFamily: 'Roboto', fontSize: 20, fontWeight: FontWeight.w700, onPressed: (){
@@ -105,7 +105,7 @@ class _RegisterViewState extends State<RegisterView> {
   }
 
   void openOTPDialog() {
-    final TextEditingController otpController = TextEditingController();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -130,9 +130,9 @@ class _RegisterViewState extends State<RegisterView> {
             return AlertDialog(
               backgroundColor: Colors.white,
               title: CustomText(
-                text: 'Enter the OTP sent to your email',
+                text: 'Enter the Verification Code sent to your email',
                 fontFamily: 'EB Garamond',
-                fontSize: 20,
+                fontSize: 16,
                 color: Colors.black,
                 fontWeight: FontWeight.w700,
                 textAlign:  TextAlign.center,
@@ -153,7 +153,7 @@ class _RegisterViewState extends State<RegisterView> {
                     child: SizedBox(
                       width: screenWidth * 0.9,
                       height: screenHeight * 0.05,
-                      child:  CustomOutlineTextField(hintext: 'OTP', controller: otpController),
+                      child:  CustomOutlineTextField(hintext: 'Verification Code', controller: registerBloc.otpController),
                     ),
                   ),
                 ],
@@ -197,6 +197,7 @@ class _RegisterViewState extends State<RegisterView> {
                         textColor: Colors.white,
                         fontSize: 16.0,
                       );
+                      registerBloc.sendCode(context);
                     }
                     Fluttertoast.showToast(
                       msg: "Please wait for the timer to finish",
