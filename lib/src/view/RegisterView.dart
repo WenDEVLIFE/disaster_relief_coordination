@@ -1,9 +1,13 @@
+import 'dart:async';
+
+import 'package:disaster_relief_coordination/src/bloc/RegisterBloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:disaster_relief_coordination/src/helpers/SvgHelpers.dart';
 import 'package:disaster_relief_coordination/src/widgets/CustomButton.dart';
 import 'package:disaster_relief_coordination/src/widgets/CustomOutlineTextField.dart';
 import 'package:disaster_relief_coordination/src/widgets/CustomText.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../widgets/CustomOutlinePasswordField.dart';
 
 class RegisterView extends StatefulWidget {
@@ -15,6 +19,14 @@ class RegisterView extends StatefulWidget {
 
 class _RegisterViewState extends State<RegisterView> {
   final TextEditingController controller = TextEditingController();
+  late RegisterBloc registerBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    registerBloc = RegisterBloc();
+
+  }
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -54,8 +66,26 @@ class _RegisterViewState extends State<RegisterView> {
                 child: CustomOutlinePassField(hintext: 'Confirm Password', controller: controller),
               ),
               Padding(padding: EdgeInsets.all(16.0),
-                child:  CustomButton(hintText: 'LOGIN', fontFamily: 'Roboto', fontSize: 20, fontWeight: FontWeight.w700, onPressed: (){
+                child:  CustomButton(hintText: 'Register', fontFamily: 'Roboto', fontSize: 20, fontWeight: FontWeight.w700, onPressed: (){
 
+                if (registerBloc.emailController.text.isEmpty ||
+                    registerBloc.passwordController.text.isEmpty ||
+                    registerBloc.confirmPasswordController.text.isEmpty ||
+                    registerBloc.nameController.text.isEmpty) {
+                  Fluttertoast.showToast(
+                    msg: "Please fill all the fields",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.grey,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                  return;
+                }
+
+                registerBloc.sendCode(context);
+                openOTPDialog();
                 }, width: screenWidth * 0.8, height: screenHeight * 0.05 ),
               ),
               Padding(padding: EdgeInsets.all(16.0),
@@ -71,6 +101,150 @@ class _RegisterViewState extends State<RegisterView> {
             ],
           )
       ),
+    );
+  }
+
+  void openOTPDialog() {
+    final TextEditingController otpController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        int secondsLeft = 30;
+        Timer? timer;
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            timer ??= Timer.periodic(Duration(seconds: 1), (t) {
+              if (secondsLeft > 0) {
+                setState(() {
+                  secondsLeft--;
+                });
+              } else {
+                t.cancel();
+              }
+            });
+
+            final double screenHeight = MediaQuery.of(context).size.height;
+            final double screenWidth = MediaQuery.of(context).size.width;
+
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              title: CustomText(
+                text: 'Enter the OTP sent to your email',
+                fontFamily: 'EB Garamond',
+                fontSize: 20,
+                color: Colors.black,
+                fontWeight: FontWeight.w700,
+                textAlign:  TextAlign.center,
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CustomText(
+                    text:  'Time left: $secondsLeft seconds',
+                    fontFamily: 'EB Garamond',
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                    textAlign:  TextAlign.center,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: SizedBox(
+                      width: screenWidth * 0.9,
+                      height: screenHeight * 0.05,
+                      child:  CustomOutlineTextField(hintext: 'OTP', controller: otpController),
+                    ),
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+
+                TextButton(
+                  child:CustomText(
+                    text: 'Cancel',
+                    fontFamily: 'EB Garamond',
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                    textAlign:  TextAlign.center,
+                  ),
+                  onPressed: () {
+                    timer?.cancel();
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child:CustomText(
+                    text: 'Resend',
+                    fontFamily: 'EB Garamond',
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                    textAlign: TextAlign.center,
+                  ),
+                  onPressed: () {
+                    if (secondsLeft == 0) {
+                      setState(() {
+                        secondsLeft = 30;
+                      });
+                      Fluttertoast.showToast(
+                        msg: "OTP resent",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.grey,
+                        textColor: Colors.white,
+                        fontSize: 16.0,
+                      );
+                    }
+                    Fluttertoast.showToast(
+                      msg: "Please wait for the timer to finish",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.grey,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                  },
+                ),
+                TextButton(
+                  onPressed: secondsLeft == 0
+                      ? null
+                      : () async {
+
+                    if (registerBloc.otpController.text == registerBloc.otpCode) {
+                      await registerBloc.register(context);
+                      timer?.cancel();
+                      Navigator.of(context).pop();
+                      Navigator.pop(context);
+                    } else {
+                      Fluttertoast.showToast(
+                        msg: "Invalid OTP",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.grey,
+                        textColor: Colors.white,
+                        fontSize: 16.0,
+                      );
+                    }
+                  },
+                  child: CustomText(
+                    text: 'Submit',
+                    fontFamily: 'EB Garamond',
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 

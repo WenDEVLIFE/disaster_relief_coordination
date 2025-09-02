@@ -1,6 +1,7 @@
 import 'package:disaster_relief_coordination/src/bloc/AlertBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/LoginBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/PersonBloc.dart';
+import 'package:disaster_relief_coordination/src/bloc/RegisterBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/StatusBloc.dart';
 import 'package:disaster_relief_coordination/src/services/FirebaseServices.dart';
 import 'package:disaster_relief_coordination/src/view/SplashView.dart';
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
   BlocProvider<LoginBloc>(
   create: (context) => LoginBloc()
   ),
+
     BlocProvider<StatusBloc>(
         create: (context) => StatusBloc()
     ),
@@ -33,6 +35,9 @@ class MyApp extends StatelessWidget {
     BlocProvider<AlertBloc>  (
         create: (context) => AlertBloc()
     ),
+    BlocProvider<RegisterBloc>(
+        create: (context) => RegisterBloc()
+    )
   ],
   child:  MaterialApp(
   title: 'E-Diary Cakes',
