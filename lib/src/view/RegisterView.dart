@@ -5,7 +5,6 @@ import 'package:disaster_relief_coordination/src/widgets/CustomButton.dart';
 import 'package:disaster_relief_coordination/src/widgets/CustomOutlineTextField.dart';
 import 'package:disaster_relief_coordination/src/widgets/CustomText.dart';
 import '../widgets/CustomOutlinePasswordField.dart';
-import '../widgets/CustomOutlineTextField.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({Key? key}) : super(key: key);
@@ -38,7 +37,7 @@ class _RegisterViewState extends State<RegisterView> {
                     width: screenWidth * 0.25,
                     height: screenHeight * 0.1,
                     fit: BoxFit.cover,
-                    color: Colors.blue,
+                    colorFilter: ColorFilter.mode(Colors.blue, BlendMode.srcIn)
                   ),
                 ),
               ),
@@ -64,6 +63,7 @@ class _RegisterViewState extends State<RegisterView> {
                   onTap: (){
                     // Navigate to forgot password screen
                     print('login tapped');
+                    Navigator.pop(context);
                   },
                   child: CustomText(text: "Already have an account? Click me to login", fontFamily: 'Roboto', fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w700, textAlign: TextAlign.center),
                 ),
