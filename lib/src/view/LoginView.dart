@@ -6,6 +6,7 @@ import 'package:disaster_relief_coordination/src/widgets/CustomText.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../widgets/CustomOutlinePasswordField.dart';
+import 'ForgotPasswordView.dart';
 import 'RegisterView.dart';
 
 
@@ -50,7 +51,7 @@ class _LoginViewState extends State<LoginView> {
                   width: screenWidth * 0.25,
                   height: screenHeight * 0.1,
                   fit: BoxFit.cover,
-                  color: Colors.blue,
+                  colorFilter:  ColorFilter.mode(Colors.blue, BlendMode.srcIn),
                 ),
               ),
             ),
@@ -65,6 +66,9 @@ class _LoginViewState extends State<LoginView> {
                 onTap: (){
                   // Navigate to forgot password screen
                   print('Forgot Password tapped');
+                  Navigator.push(context,  MaterialPageRoute(builder: (context) {
+                    return ForgotPasswordView();
+                  }));
                 },
                 child: CustomText(text: 'Forgot Password?', fontFamily: 'Roboto', fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w700, textAlign: TextAlign.center),
               ),
