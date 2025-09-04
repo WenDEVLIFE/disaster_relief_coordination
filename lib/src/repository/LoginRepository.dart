@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class Loginrepository {
   Future<Map<String, dynamic>?> loginUser(String email, String password);
+
+  Future<bool> resetPassword(String email);
 }
 
 class LoginRepositoryImpl extends Loginrepository {
@@ -33,4 +35,16 @@ class LoginRepositoryImpl extends Loginrepository {
       return null;
     }
   }
+
+  @override
+  Future<bool> resetPassword(String email) {
+    return _auth.sendPasswordResetEmail(email: email)
+      .then((value) => true)
+      .catchError((error) {
+        print('Password reset failed: $error');
+        return false;
+      });
+  }
+
+
 }
