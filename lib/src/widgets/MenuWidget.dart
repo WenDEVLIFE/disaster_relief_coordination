@@ -1,4 +1,6 @@
+import 'package:disaster_relief_coordination/src/helpers/SessionHelper.dart';
 import 'package:disaster_relief_coordination/src/helpers/SvgHelpers.dart';
+import 'package:disaster_relief_coordination/src/view/LoginView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -53,7 +55,42 @@ class MenuListWidget extends StatelessWidget {
                 ),
                 trailing: const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 22),
                 onTap: () {
-                  // Handle taps here
+    
+                  if (menuItems[index].title == 'Logout') {
+                    // Handle logout action
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Logout'),
+                          content: const Text('Are you sure you want to logout?'),
+                          actions: [
+                            TextButton(
+                              child: const Text('Cancel'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: const Text('Logout'),
+                              onPressed: () {
+                                // Perform logout operation here
+                                Navigator.of(context).pop();
+                                SessionHelpers.clearUserInfo();
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>LoginView(),
+                                ));
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    // Handle other menu item taps
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${menuItems[index].title} tapped')),
+                    );
+                  }
                 },
               );
             },

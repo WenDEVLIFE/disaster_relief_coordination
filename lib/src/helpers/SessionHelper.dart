@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SessionHelpers {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> saveUserInfo(Map<String, dynamic> userInfo) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -27,7 +27,7 @@ class SessionHelpers {
     return null;
   }
 
-  Future <void> clearUserInfo() async{
+  static Future <void> clearUserInfo() async{
     SharedPreferences.getInstance().then((prefs) {
       prefs.remove('email');
       prefs.remove('uid');
