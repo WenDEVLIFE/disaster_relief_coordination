@@ -6,6 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 abstract class LoginEvent extends Equatable {
 
@@ -39,24 +40,31 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       return;
     }
 
-    var  userData = await loginRepository.loginUser(email, password);
+    try{
+      var  userData = await loginRepository.loginUser(email, password);
 
-    if (userData != null) {
-      // Login successful, navigate to the next screen
-      print('Login successful: $userData');
-      String email = userData['Email'].toString();
-      String role = userData['Role'].toString();
-      String fullName = userData['FUllName'].toString();
-      String uid = userData['Uid'].toString();
+      if (userData != null) {
+        // Login successful, navigate to the next screen
+        print('Login successful: $userData');
+        String email = userData['Email'].toString();
+        String role = userData['Role'].toString();
+        String fullName = userData['FUllName'].toString();
+        String uid = userData['Uid'].toString();
 
-      // save the session
-      sessionHelpers.saveUserInfo({'email': email, 'role': role, 'fullName': fullName, 'uid': uid});
+        // save the session
+        sessionHelpers.saveUserInfo({'email': email, 'role': role, 'fullName': fullName, 'uid': uid});
 
-      // navigate to next page
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => GetStartedView()));
-    } else {
-      // Show error message
-      print('Login failed');
+        // navigate to next page
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => GetStartedView()));
+      } else {
+        // Show error message
+        print('Login failed');
+        Fluttertoast.showToast(msg: 'Login failed: Invalid credentials');
+      }
+    }
+    catch(e){
+      print('Login error: $e');
+      Fluttertoast.showToast(msg: 'Login error: $e');
     }
   }
 }

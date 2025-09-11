@@ -28,7 +28,7 @@ class LoginRepositoryImpl extends Loginrepository {
         'Uid': user.uid,
         'Email': doc['Email'],
         'Role': doc['Role'],
-        'FUllName': doc['FUllName'],
+        'FUllName': doc['FullName'],
       };
     } catch (e) {
       print('Login failed: $e');

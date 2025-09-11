@@ -11,8 +11,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  await FirebaseServices.run();
   runApp(const MyApp());
+  await FirebaseServices.run();
 }
 
 class MyApp extends StatelessWidget {
