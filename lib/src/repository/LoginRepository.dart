@@ -27,7 +27,6 @@ class LoginRepositoryImpl extends Loginrepository {
       return {
         'Uid': user.uid,
         'Email': doc['Email'],
-        'Role': doc['Role'],
         'FUllName': doc['FullName'],
       };
     } catch (e) {
