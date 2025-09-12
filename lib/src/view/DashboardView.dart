@@ -22,49 +22,49 @@ class DashboardView extends StatelessWidget {
       appBar: AppBar(
         title: const CustomText(text: 'Home', fontFamily: 'GoogleSansCode', fontSize: 30, color: Colors.black, fontWeight: FontWeight.w700, textAlign: TextAlign.center)
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(width: screenWidth * 0.10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                PanelWidget(label: 'Alerts & Warnings', svgPath: SvgHelpers.alert, onTap: (){
-                 print('Alerts & Warnings tapped');
+      body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(width: screenWidth * 0.10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  PanelWidget(label: 'Alerts & Warnings', svgPath: SvgHelpers.alert, onTap: (){
+                    print('Alerts & Warnings tapped');
 
-                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                   return const AlertView();
-                 }));
-                },),
-                SizedBox(width: screenWidth * 0.05), // Spacing between panels
-                PanelWidget(label: 'Relief Centers', svgPath: SvgHelpers.mapin, onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return const AlertView();
+                    }));
+                  },),
+                  SizedBox(width: screenWidth * 0.05), // Spacing between panels
+                  PanelWidget(label: 'Relief Centers', svgPath: SvgHelpers.mapin, onTap: (){
 
-                },),
-              ],
-            ),
-            SizedBox(width: screenWidth * 0.10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                PanelWidget(label: 'My Status', svgPath: SvgHelpers.person, onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const MyStatusView();
-                  }));
+                  },),
+                ],
+              ),
+              SizedBox(width: screenWidth * 0.10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  PanelWidget(label: 'My Status', svgPath: SvgHelpers.person, onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return const MyStatusView();
+                    }));
 
-                },),
-                SizedBox(width: screenWidth * 0.05), // Spacing between panels
-                PanelWidget(label: 'Settings', svgPath: SvgHelpers.settings, onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const SettingView();
-                  }));
+                  },),
+                  SizedBox(width: screenWidth * 0.05), // Spacing between panels
+                  PanelWidget(label: 'Settings', svgPath: SvgHelpers.settings, onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return const SettingView();
+                    }));
 
-                },),
-              ],
-            ),
-          ],
-        ),
-      ),
+                  },),
+                ],
+              ),
+            ],
+          ),
+        )
     );
   }
 
