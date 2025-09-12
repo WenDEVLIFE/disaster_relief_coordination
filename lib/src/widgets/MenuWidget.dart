@@ -73,10 +73,10 @@ class MenuListWidget extends StatelessWidget {
                             ),
                             TextButton(
                               child: const Text('Logout'),
-                              onPressed: () {
+                              onPressed: () async{
                                 // Perform logout operation here
                                 Navigator.of(context).pop();
-                                SessionHelpers.clearUserInfo();
+                                await SessionHelpers.clearUserInfo();
                                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>LoginView(),
                                 ));
                               },

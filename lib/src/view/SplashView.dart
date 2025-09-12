@@ -27,18 +27,21 @@ class _SplashViewState extends State<SplashView> {
       setState(() {
         isLoading = false;
       });
-
-      var session = sessionHelpers.getUserInfo();
-      if (session != null) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-          return GetStartedView();
-        }));
-      } else {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-          return LoginView();
-        }));
-      }
+      loadSessions();
     });
+  }
+
+  void loadSessions() async{
+    var session = await sessionHelpers.getUserInfo();
+    if (session != null) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+        return GetStartedView();
+      }));
+    } else {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+        return LoginView();
+      }));
+    }
   }
 
   @override
