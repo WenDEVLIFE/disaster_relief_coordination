@@ -1,4 +1,5 @@
 import 'package:disaster_relief_coordination/src/model/AlertModel.dart';
+import 'package:disaster_relief_coordination/src/services/PhilippineDisasterService.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,71 +16,48 @@ class LoadAlerts extends AlertEvents {
 
 class AlertState extends AlertEvents {
   final List<AlertModel> alerts;
+  final bool isLoading;
+  final String? error;
 
-  const AlertState(this.alerts);
+  const AlertState(this.alerts, {this.isLoading = false, this.error});
+
+  AlertState copyWith({
+    List<AlertModel>? alerts,
+    bool? isLoading,
+    String? error,
+  }) {
+    return AlertState(
+      alerts ?? this.alerts,
+      isLoading: isLoading ?? this.isLoading,
+      error: error ?? this.error,
+    );
+  }
 
   @override
-  List<Object> get props => [alerts];
+  List<Object> get props => [alerts, isLoading, error ?? ''];
 }
 
 class AlertBloc extends Bloc<AlertEvents, AlertState> {
+  final PhilippineDisasterService _disasterService;
 
-  AlertBloc() : super(const AlertState([])) {
-    on<AlertEvents>((event, emit) {
-      // Replace with your actual data source
-      emit(AlertState([
-        AlertModel(
-          id : '1',
-          alertname: 'Flood Alert',
-          description: 'Heavy rainfall expected in the area.',
-          status: 'Active',
-          address: '123 Main St, City',
-          timestamp: '2023-10-01 12:00',
-          disasterType: 'Flood',
-        ),
-
-        AlertModel(
-          id : '2',
-          alertname: 'Earthquake Alert',
-          description: 'Seismic activity detected.',
-          status: 'Active',
-          address: '456 Elm St, City',
-          timestamp: '2023-10-01 14:00',
-          disasterType: 'Earthquake',
-        ),
-
-        AlertModel(
-          id : '3',
-          alertname: 'Wildfire Alert',
-          description: 'Wildfire reported in the area.',
-          status: 'Active',
-          address: '789 Oak St, City',
-          timestamp: '2023-10-01 16:00',
-          disasterType: 'Wildfire',
-        ),
-
-        AlertModel(
-          id : '4',
-          alertname: 'Tornado Alert',
-          description: 'Tornado warning issued for the area.',
-          status: 'Active',
-          address: '101 Pine St, City',
-          timestamp: '2023-10-01 18:00',
-          disasterType: 'Tornado',
-        ),
-
-        AlertModel(
-          id : '5',
-          alertname: 'Hurricane Alert',
-          description: 'Hurricane approaching the coast.',
-          status: 'Active',
-          address: '202 Maple St, City',
-          timestamp: '2023-10-01 20:00',
-          disasterType: 'Hurricane',
-        ),
-
-      ]));
-    });
+  AlertBloc({required PhilippineDisasterService disasterService})
+    : _disasterService = disasterService,
+      super(const AlertState([])) {
+    on<LoadAlerts>(_onLoadAlerts);
   }
 
+  Future<void> _onLoadAlerts(LoadAlerts event, Emitter<AlertState> emit) async {
+    try {
+      emit(state.copyWith(isLoading: true));
+
+      // Fetch real Philippine disaster alerts
+      final alerts = await _disasterService.getAllDisasterAlerts();
+
+      emit(state.copyWith(alerts: alerts, isLoading: false));
+    } catch (e) {
+      emit(
+        state.copyWith(isLoading: false, error: 'Failed to load alerts: $e'),
+      );
+    }
+  }
 }
