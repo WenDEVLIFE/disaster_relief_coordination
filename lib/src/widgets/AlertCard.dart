@@ -43,21 +43,34 @@ class AlertCard extends StatelessWidget {
             CustomText(
               text: alert.timestamp,
               fontFamily: 'GoogleSansCode',
-              fontSize: 18,
-              color: Colors.black,
-              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              color: Colors.black54,
+              fontWeight: FontWeight.w500,
+              textAlign: TextAlign.left,
+            ),
+            const SizedBox(height: 4),
+            CustomText(
+              text: alert.description,
+              fontFamily: 'GoogleSansCode',
+              fontSize: 14,
+              color: Colors.black87,
+              fontWeight: FontWeight.w400,
               textAlign: TextAlign.left,
             ),
           ],
         ),
-        trailing: CustomText(
-          text: alert.address,
-          fontFamily: 'GoogleSansCode',
-          fontSize: 16,
-          color: Colors.black,
-          fontWeight: FontWeight.w500,
-          textAlign: TextAlign.right,
+        trailing: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 100),
+          child: CustomText(
+            text: alert.address,
+            fontFamily: 'GoogleSansCode',
+            fontSize: 14,
+            color: Colors.black54,
+            fontWeight: FontWeight.w500,
+            textAlign: TextAlign.right,
+          ),
         ),
+        isThreeLine: true,
       ),
     );
   }
@@ -69,10 +82,12 @@ class AlertCard extends StatelessWidget {
         return SvgHelpers.thunderstorm;
       case 'flood':
       case 'flash flood':
+      case 'river flood':
         return SvgHelpers.rain;
       case 'earthquake':
         return SvgHelpers.privacy; // Using earthlock as earthquake icon
       case 'volcanic activity':
+      case 'volcano':
         return SvgHelpers.construction; // Using construction as volcano icon
       case 'tornado':
         return SvgHelpers.thunderstorm; // Using thunderstorm as tornado icon
@@ -100,10 +115,12 @@ class AlertCard extends StatelessWidget {
         return Colors.orange;
       case 'flood':
       case 'flash flood':
+      case 'river flood':
         return Colors.blue;
       case 'earthquake':
         return Colors.brown;
       case 'volcanic activity':
+      case 'volcano':
         return Colors.red;
       case 'tornado':
         return Colors.purple;

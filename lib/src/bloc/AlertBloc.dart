@@ -1,5 +1,6 @@
 import 'package:disaster_relief_coordination/src/model/AlertModel.dart';
 import 'package:disaster_relief_coordination/src/services/PhilippineDisasterService.dart';
+import 'package:disaster_relief_coordination/src/services/GdacsService.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -39,10 +40,14 @@ class AlertState extends AlertEvents {
 
 class AlertBloc extends Bloc<AlertEvents, AlertState> {
   final PhilippineDisasterService _disasterService;
+  final GdacsService _gdacsService;
 
-  AlertBloc({required PhilippineDisasterService disasterService})
-    : _disasterService = disasterService,
-      super(const AlertState([])) {
+  AlertBloc({
+    required PhilippineDisasterService disasterService,
+    required GdacsService gdacsService,
+  }) : _disasterService = disasterService,
+       _gdacsService = gdacsService,
+       super(const AlertState([])) {
     on<LoadAlerts>(_onLoadAlerts);
   }
 
@@ -51,9 +56,15 @@ class AlertBloc extends Bloc<AlertEvents, AlertState> {
       emit(state.copyWith(isLoading: true));
 
       // Fetch real Philippine disaster alerts
-      final alerts = await _disasterService.getAllDisasterAlerts();
+      final philippineAlerts = await _disasterService.getAllDisasterAlerts();
 
-      emit(state.copyWith(alerts: alerts, isLoading: false));
+      // Fetch GDACS alerts (floods and typhoons)
+      final gdacsAlerts = await _gdacsService.getAllGdacsAlerts();
+
+      // Combine all alerts
+      final allAlerts = [...philippineAlerts, ...gdacsAlerts];
+
+      emit(state.copyWith(alerts: allAlerts, isLoading: false));
     } catch (e) {
       emit(
         state.copyWith(isLoading: false, error: 'Failed to load alerts: $e'),

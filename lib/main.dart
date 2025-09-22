@@ -6,6 +6,7 @@ import 'package:disaster_relief_coordination/src/bloc/RegisterBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/StatusBloc.dart';
 import 'package:disaster_relief_coordination/src/services/FirebaseServices.dart';
 import 'package:disaster_relief_coordination/src/services/PhilippineDisasterService.dart';
+import 'package:disaster_relief_coordination/src/services/GdacsService.dart';
 import 'package:disaster_relief_coordination/src/view/SplashView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
               openWeatherApiKey:
                   'b1b15e88fa797225412429c1c50c122a1', // Free OpenWeather API key for testing
             ),
+            gdacsService: GdacsService(),
           ),
         ),
         BlocProvider<RegisterBloc>(create: (context) => RegisterBloc()),
