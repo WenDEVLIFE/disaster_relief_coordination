@@ -26,6 +26,8 @@ dependencies:
   font_awesome_flutter : ^10.3.0
   http: ^1.2.2
   xml: ^6.5.0
+  flutter_map: ^6.1.0
+  maplibre_gl: ^0.22.0
 
 dev_dependencies:
   flutter_test:
