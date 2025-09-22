@@ -29,8 +29,12 @@ class MyApp extends StatelessWidget {
         BlocProvider<StatusBloc>(create: (context) => StatusBloc()),
         BlocProvider<PersonBloc>(create: (context) => PersonBloc()),
         BlocProvider<AlertBloc>(
-          create: (context) =>
-              AlertBloc(disasterService: PhilippineDisasterService()),
+          create: (context) => AlertBloc(
+            disasterService: PhilippineDisasterService(
+              openWeatherApiKey:
+                  'b1b15e88fa797225412429c1c50c122a1', // Free OpenWeather API key for testing
+            ),
+          ),
         ),
         BlocProvider<RegisterBloc>(create: (context) => RegisterBloc()),
       ],

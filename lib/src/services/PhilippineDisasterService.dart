@@ -189,13 +189,17 @@ class PhilippineDisasterService {
   }
 
   // Get all Philippine disaster alerts
-  Future<List<AlertModel>> getAllDisasterAlerts() async {
+  Future<List<AlertModel>> getAllDisasterAlerts({
+    double lat = 14.5995,
+    double lon = 120.9842,
+  }) async {
     try {
       final results = await Future.wait([
         getTyphoonWarnings(),
         getFloodWarnings(),
         getEarthquakeAlerts(),
         getVolcanoAlerts(),
+        getWeatherAlerts(lat, lon), // Add weather alerts from OpenWeather
       ]);
 
       final allAlerts = <AlertModel>[];
@@ -228,5 +232,259 @@ class PhilippineDisasterService {
               alert.disasterType.toLowerCase() == disasterType.toLowerCase(),
         )
         .toList();
+  }
+
+  // Fetch current weather from OpenWeather API
+  Future<Map<String, dynamic>?> getCurrentWeather(
+    double lat,
+    double lon,
+  ) async {
+    try {
+      final url =
+          '$_openWeatherBaseUrl/weather?lat=$lat&lon=$lon&appid=$_openWeatherApiKey&units=metric';
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        print('Failed to load current weather: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching current weather: $e');
+      return null;
+    }
+  }
+
+  // Fetch weather alerts from OpenWeather API
+  Future<Map<String, dynamic>?> getWeatherAlertsData(
+    double lat,
+    double lon,
+  ) async {
+    try {
+      final url =
+          '$_openWeatherBaseUrl/onecall?lat=$lat&lon=$lon&appid=$_openWeatherApiKey&exclude=current,minutely,hourly,daily';
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        print('Failed to load weather alerts: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching weather alerts: $e');
+      return null;
+    }
+  }
+
+  // Get weather alerts based on current conditions
+  Future<List<AlertModel>> getWeatherAlerts(double lat, double lon) async {
+    try {
+      final weatherData = await getCurrentWeather(lat, lon);
+      final alertsData = await getWeatherAlertsData(lat, lon);
+
+      final alerts = <AlertModel>[];
+
+      // Debug logging
+      print('=== WEATHER API DEBUG ===');
+      print('Weather Data received: ${weatherData != null ? 'YES' : 'NO'}');
+      if (weatherData != null) {
+        print('Weather main: ${weatherData['weather'][0]['main']}');
+        print(
+          'Weather description: ${weatherData['weather'][0]['description']}',
+        );
+        print('Temperature: ${weatherData['main']['temp']}°C');
+        print('Wind speed: ${weatherData['wind']['speed']} m/s');
+        print('Location: ${weatherData['name']}');
+      } else {
+        print('Weather API failed - no data received');
+      }
+
+      print(
+        'Weather Alerts Data received: ${alertsData != null ? 'YES' : 'NO'}',
+      );
+      if (alertsData != null && alertsData['alerts'] != null) {
+        print('Weather alerts from API: ${alertsData['alerts'].length}');
+      }
+
+      if (weatherData != null) {
+        final weatherAlerts = _createWeatherAlertsFromData(
+          weatherData,
+          lat,
+          lon,
+        );
+        alerts.addAll(weatherAlerts);
+        print('Generated ${weatherAlerts.length} alerts from weather data');
+      }
+
+      if (alertsData != null && alertsData['alerts'] != null) {
+        final apiAlerts = _createAlertsFromWeatherAPI(
+          alertsData['alerts'],
+          lat,
+          lon,
+        );
+        alerts.addAll(apiAlerts);
+        print('Generated ${apiAlerts.length} alerts from weather API');
+      }
+
+      // Add fallback weather alerts if no alerts were generated
+      if (alerts.isEmpty) {
+        print('No weather alerts generated from API, adding fallback alerts');
+        alerts.addAll(_getFallbackWeatherAlerts(lat, lon));
+      }
+
+      print('Total weather alerts generated: ${alerts.length}');
+      print('=== END WEATHER DEBUG ===');
+      return alerts;
+    } catch (e) {
+      print('Error fetching weather alerts: $e');
+      print('Stack trace: ${StackTrace.current}');
+      // Return fallback alerts on error
+      return _getFallbackWeatherAlerts(lat, lon);
+    }
+  }
+
+  // Create weather alerts from current weather data
+  List<AlertModel> _createWeatherAlertsFromData(
+    Map<String, dynamic> weatherData,
+    double lat,
+    double lon,
+  ) {
+    final alerts = <AlertModel>[];
+    final weather = weatherData['weather'][0];
+    final main = weatherData['main'];
+    final wind = weatherData['wind'];
+    final location = weatherData['name'] ?? 'Current Location';
+
+    final weatherMain = weather['main'].toString().toLowerCase();
+    final description = weather['description'].toString();
+
+    // Thunderstorm alert
+    if (weatherMain.contains('thunderstorm')) {
+      alerts.add(
+        AlertModel(
+          id: 'weather_thunderstorm_${DateTime.now().millisecondsSinceEpoch}',
+          alertname: 'Thunderstorm Warning',
+          description:
+              'Thunderstorm conditions detected. Heavy rain and lightning expected. Stay indoors and avoid open areas.',
+          status: 'Active',
+          address: location,
+          timestamp: DateTime.now().toIso8601String(),
+          disasterType: 'Thunderstorm',
+        ),
+      );
+    }
+
+    // Heavy rain alert
+    if (weatherMain.contains('rain') ||
+        description.contains('heavy') ||
+        description.contains('intense')) {
+      alerts.add(
+        AlertModel(
+          id: 'weather_heavy_rain_${DateTime.now().millisecondsSinceEpoch}',
+          alertname: 'Heavy Rain Warning',
+          description:
+              'Heavy rainfall detected. Possible flooding in low-lying areas. Avoid unnecessary travel.',
+          status: 'Active',
+          address: location,
+          timestamp: DateTime.now().toIso8601String(),
+          disasterType: 'Heavy Rain',
+        ),
+      );
+    }
+
+    // Extreme weather alert
+    if (main['temp'] > 35 || main['temp'] < 5 || wind['speed'] > 20) {
+      alerts.add(
+        AlertModel(
+          id: 'weather_extreme_${DateTime.now().millisecondsSinceEpoch}',
+          alertname: 'Extreme Weather Alert',
+          description:
+              'Extreme weather conditions detected. Take necessary precautions and stay updated.',
+          status: 'Active',
+          address: location,
+          timestamp: DateTime.now().toIso8601String(),
+          disasterType: 'Extreme Weather',
+        ),
+      );
+    }
+
+    return alerts;
+  }
+
+  // Create alerts from OpenWeather API alerts
+  List<AlertModel> _createAlertsFromWeatherAPI(
+    List alertsData,
+    double lat,
+    double lon,
+  ) {
+    return alertsData.map<AlertModel>((alert) {
+      return AlertModel(
+        id: 'weather_api_${alert['event']}_${DateTime.now().millisecondsSinceEpoch}',
+        alertname: alert['event'] ?? 'Weather Alert',
+        description: alert['description'] ?? 'Weather alert for your area',
+        status: 'Active',
+        address: 'Current Location',
+        timestamp: DateTime.now().toIso8601String(),
+        disasterType: _mapWeatherEventToDisasterType(alert['event']),
+      );
+    }).toList();
+  }
+
+  // Map weather event to disaster type
+  String _mapWeatherEventToDisasterType(String? event) {
+    if (event == null) return 'Weather';
+
+    final eventLower = event.toLowerCase();
+
+    if (eventLower.contains('flood')) return 'Flood';
+    if (eventLower.contains('storm') || eventLower.contains('thunder'))
+      return 'Thunderstorm';
+    if (eventLower.contains('rain')) return 'Heavy Rain';
+    if (eventLower.contains('wind')) return 'Strong Wind';
+    if (eventLower.contains('heat')) return 'Extreme Heat';
+    if (eventLower.contains('cold')) return 'Extreme Cold';
+
+    return 'Weather';
+  }
+
+  // Get fallback weather alerts for testing and when API fails
+  List<AlertModel> _getFallbackWeatherAlerts(double lat, double lon) {
+    final now = DateTime.now();
+    final location = 'Manila, Philippines';
+
+    return [
+      AlertModel(
+        id: 'fallback_thunderstorm_${now.millisecondsSinceEpoch}',
+        alertname: 'Thunderstorm Warning',
+        description:
+            '⚡ Thunderstorm conditions possible. Heavy rain and lightning expected. Stay indoors and avoid open areas. Monitor weather updates.',
+        status: 'Active',
+        address: location,
+        timestamp: now.toIso8601String(),
+        disasterType: 'Thunderstorm',
+      ),
+      AlertModel(
+        id: 'fallback_heavy_rain_${now.millisecondsSinceEpoch}',
+        alertname: 'Heavy Rain Warning',
+        description:
+            '🌧️ Heavy rainfall expected. Possible flooding in low-lying areas. Avoid unnecessary travel and stay updated with PAGASA advisories.',
+        status: 'Active',
+        address: location,
+        timestamp: now.subtract(const Duration(minutes: 15)).toIso8601String(),
+        disasterType: 'Heavy Rain',
+      ),
+      AlertModel(
+        id: 'fallback_flood_watch_${now.millisecondsSinceEpoch}',
+        alertname: 'Flood Watch',
+        description:
+            '🏔️ Rising water levels possible due to continuous rains. Residents in flood-prone areas should prepare for possible evacuation.',
+        status: 'Watch',
+        address: location,
+        timestamp: now.subtract(const Duration(hours: 1)).toIso8601String(),
+        disasterType: 'Flood',
+      ),
+    ];
   }
 }

@@ -76,6 +76,18 @@ class AlertCard extends StatelessWidget {
         return SvgHelpers.construction; // Using construction as volcano icon
       case 'tornado':
         return SvgHelpers.thunderstorm; // Using thunderstorm as tornado icon
+      case 'thunderstorm':
+        return SvgHelpers.thunderstorm;
+      case 'heavy rain':
+        return SvgHelpers.rain;
+      case 'extreme weather':
+        return SvgHelpers.alert;
+      case 'strong wind':
+        return SvgHelpers.thunderstorm;
+      case 'extreme heat':
+        return SvgHelpers.sunny;
+      case 'extreme cold':
+        return SvgHelpers.rain;
       default:
         return SvgHelpers.alert; // Default alert icon
     }
@@ -95,6 +107,18 @@ class AlertCard extends StatelessWidget {
         return Colors.red;
       case 'tornado':
         return Colors.purple;
+      case 'thunderstorm':
+        return Colors.purple;
+      case 'heavy rain':
+        return Colors.blue;
+      case 'extreme weather':
+        return Colors.red;
+      case 'strong wind':
+        return Colors.grey;
+      case 'extreme heat':
+        return Colors.orange;
+      case 'extreme cold':
+        return Colors.cyan;
       default:
         return ColorHelpers.primaryColor;
     }
