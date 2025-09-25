@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:disaster_relief_coordination/src/bloc/AlertBloc.dart';
+import 'package:disaster_relief_coordination/src/bloc/LanguageBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/LoginBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/PasswordChangeBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/PersonBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/ProfileBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/RegisterBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/StatusBloc.dart';
+import 'package:disaster_relief_coordination/src/services/LanguageService.dart';
 import 'package:disaster_relief_coordination/src/repository/RegisterRepository.dart';
 import 'package:disaster_relief_coordination/src/services/FirebaseServices.dart';
 import 'package:disaster_relief_coordination/src/services/PhilippineDisasterService.dart';
@@ -32,6 +34,11 @@ class MyApp extends StatelessWidget {
         BlocProvider<StatusBloc>(create: (context) => StatusBloc()),
         BlocProvider<PersonBloc>(create: (context) => PersonBloc()),
         BlocProvider<ProfileBloc>(create: (context) => ProfileBloc()),
+        BlocProvider<LanguageBloc>(
+          create: (context) =>
+              LanguageBloc(languageService: LanguageService())
+                ..add(const InitializeLanguage()),
+        ),
         BlocProvider<PasswordChangeBloc>(
           create: (context) =>
               PasswordChangeBloc(registerRepository: RegisterRepositoryImpl()),
@@ -47,11 +54,20 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<RegisterBloc>(create: (context) => RegisterBloc()),
       ],
-      child: MaterialApp(
-        title: 'E-Diary Cakes',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(primarySwatch: Colors.blue),
-        home: const SplashView(),
+      child: BlocBuilder<LanguageBloc, LanguageState>(
+        builder: (context, state) {
+          String appTitle = 'Disaster Relief Coordination';
+          if (state is LanguageLoaded) {
+            appTitle = context.read<LanguageBloc>().translate('app_name');
+          }
+
+          return MaterialApp(
+            title: appTitle,
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(primarySwatch: Colors.blue),
+            home: const SplashView(),
+          );
+        },
       ),
     );
   }
