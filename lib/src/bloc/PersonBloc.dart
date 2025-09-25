@@ -27,14 +27,16 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
   PersonBloc() : super(const PersonState([])) {
     on<LoadPersons>((event, emit) {
       // Replace with your actual data source
-      emit(PersonState([
-        PersonModel(id: '1', name: 'Alice', status: 'Safe'),
-        PersonModel(id: '2', name: 'Bob', status: 'Unsafe'),
-        PersonModel(id: '3', name: 'Bob', status: 'Unsafe'),
-        PersonModel(id: '4', name: 'Bob', status: 'Unsafe'),
-        PersonModel(id: '5', name: 'Bob', status: 'Unsafe'),
-        PersonModel(id: '6', name: 'Bob', status: 'Unsafe'),
-      ]));
+      emit(
+        PersonState([
+          PersonModel(id: '1', name: 'Alice', status: 'Safe', gender: 'Female'),
+          PersonModel(id: '2', name: 'Bob', status: 'Unsafe', gender: 'Male'),
+          PersonModel(id: '3', name: 'Bob', status: 'Unsafe', gender: 'Male'),
+          PersonModel(id: '4', name: 'Bob', status: 'Unsafe', gender: 'Male'),
+          PersonModel(id: '5', name: 'Bob', status: 'Unsafe', gender: 'Male'),
+          PersonModel(id: '6', name: 'Bob', status: 'Unsafe', gender: 'Male'),
+        ]),
+      );
     });
   }
 }

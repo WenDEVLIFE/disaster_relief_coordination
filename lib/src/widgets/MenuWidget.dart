@@ -1,6 +1,8 @@
 import 'package:disaster_relief_coordination/src/helpers/SessionHelper.dart';
 import 'package:disaster_relief_coordination/src/helpers/SvgHelpers.dart';
+import 'package:disaster_relief_coordination/src/view/AboutView.dart';
 import 'package:disaster_relief_coordination/src/view/LoginView.dart';
+import 'package:disaster_relief_coordination/src/view/ProfileView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -55,8 +57,27 @@ class MenuListWidget extends StatelessWidget {
                 ),
                 trailing: const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 22),
                 onTap: () {
-    
-                  if (menuItems[index].title == 'Logout') {
+                  if (menuItems[index].title == 'Profile') {
+                    // Navigate to Profile screen
+                    Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ProfileView()),
+                    );
+                  } else if (menuItems[index].title == 'Notifications') {
+                    // Navigate to Notifications screen
+                  } else if (menuItems[index].title == 'Privacy & Security') {
+                    // Navigate to Privacy & Security screen
+                  } else if (menuItems[index].title == 'Emergency Contacts') {
+                    // Navigate to Emergency Contacts screen
+                  } else if (menuItems[index].title == 'Language') {
+                    // Navigate to Language screen
+                  } else if (menuItems[index].title == 'About') {
+                    // Navigate to About screen
+                    Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AboutView()),
+                    );
+                  }
+
+                    if (menuItems[index].title == 'Logout') {
                     // Handle logout action
                     showDialog(
                       context: context,

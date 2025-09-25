@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:disaster_relief_coordination/src/bloc/AlertBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/LoginBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/PersonBloc.dart';
+import 'package:disaster_relief_coordination/src/bloc/ProfileBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/RegisterBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/StatusBloc.dart';
 import 'package:disaster_relief_coordination/src/services/FirebaseServices.dart';
@@ -26,9 +27,9 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<LoginBloc>(create: (context) => LoginBloc()),
-
         BlocProvider<StatusBloc>(create: (context) => StatusBloc()),
         BlocProvider<PersonBloc>(create: (context) => PersonBloc()),
+        BlocProvider<ProfileBloc>(create: (context) => ProfileBloc()),
         BlocProvider<AlertBloc>(
           create: (context) => AlertBloc(
             disasterService: PhilippineDisasterService(
