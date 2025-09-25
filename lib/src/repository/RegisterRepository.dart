@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 abstract class RegisterRepository {
   Future<void> registerUser(String email, String password, String name);
+  Future<void> changePassword(String currentPassword, String newPassword);
 }
 
 class RegisterRepositoryImpl extends RegisterRepository {
@@ -28,6 +29,35 @@ class RegisterRepositoryImpl extends RegisterRepository {
       Fluttertoast.showToast(msg: "Registration Successful");
     } catch (e) {
       Fluttertoast.showToast(msg: "Registration failed: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    try {
+      final User? user = _auth.currentUser;
+      if (user == null) {
+        throw Exception("No authenticated user found");
+      }
+
+      // Re-authenticate user with current password
+      final credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+
+      await user.reauthenticateWithCredential(credential);
+
+      // Update password
+      await user.updatePassword(newPassword);
+
+      Fluttertoast.showToast(msg: "Password changed successfully");
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Password change failed: $e");
       rethrow;
     }
   }

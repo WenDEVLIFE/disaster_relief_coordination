@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:disaster_relief_coordination/src/bloc/AlertBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/LoginBloc.dart';
+import 'package:disaster_relief_coordination/src/bloc/PasswordChangeBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/PersonBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/ProfileBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/RegisterBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/StatusBloc.dart';
+import 'package:disaster_relief_coordination/src/repository/RegisterRepository.dart';
 import 'package:disaster_relief_coordination/src/services/FirebaseServices.dart';
 import 'package:disaster_relief_coordination/src/services/PhilippineDisasterService.dart';
 import 'package:disaster_relief_coordination/src/services/GdacsService.dart';
@@ -30,6 +32,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<StatusBloc>(create: (context) => StatusBloc()),
         BlocProvider<PersonBloc>(create: (context) => PersonBloc()),
         BlocProvider<ProfileBloc>(create: (context) => ProfileBloc()),
+        BlocProvider<PasswordChangeBloc>(
+          create: (context) =>
+              PasswordChangeBloc(registerRepository: RegisterRepositoryImpl()),
+        ),
         BlocProvider<AlertBloc>(
           create: (context) => AlertBloc(
             disasterService: PhilippineDisasterService(
