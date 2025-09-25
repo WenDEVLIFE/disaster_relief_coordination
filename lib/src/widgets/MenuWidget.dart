@@ -2,6 +2,7 @@ import 'package:disaster_relief_coordination/src/bloc/LanguageBloc.dart';
 import 'package:disaster_relief_coordination/src/helpers/SessionHelper.dart';
 import 'package:disaster_relief_coordination/src/helpers/SvgHelpers.dart';
 import 'package:disaster_relief_coordination/src/view/AboutView.dart';
+import 'package:disaster_relief_coordination/src/view/EmergencyContactView.dart';
 import 'package:disaster_relief_coordination/src/view/LanguageView.dart';
 import 'package:disaster_relief_coordination/src/view/LoginView.dart';
 import 'package:disaster_relief_coordination/src/view/NotificationView.dart';
@@ -93,6 +94,12 @@ class MenuListWidget extends StatelessWidget {
                   } else if (menuItems[index].titleKey ==
                       'emergency_contacts') {
                     // Navigate to Emergency Contacts screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EmergencyContactView(),
+                      ),
+                    );
                   } else if (menuItems[index].titleKey == 'language') {
                     Navigator.push(
                       context,
