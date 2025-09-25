@@ -1,17 +1,19 @@
+import 'package:disaster_relief_coordination/src/bloc/LanguageBloc.dart';
 import 'package:disaster_relief_coordination/src/widgets/CustomText.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../helpers/ColorHelpers.dart';
 
 class PanelWidget extends StatelessWidget {
-  final String label;
+  final String labelKey;
   final String svgPath;
   final VoidCallback? onTap;
 
   const PanelWidget({
     super.key,
-    required this.label,
+    required this.labelKey,
     required this.svgPath,
     required this.onTap,
   });
@@ -53,7 +55,7 @@ class PanelWidget extends StatelessWidget {
             ),
             SizedBox(height: screenHeight * 0.01),
             CustomText(
-              text: label,
+              text: context.read<LanguageBloc>().translate(labelKey),
               fontFamily: 'GoogleSansCode',
               fontSize: 20,
               color: Colors.black,

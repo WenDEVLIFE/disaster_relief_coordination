@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/LanguageBloc.dart';
 import '../helpers/SvgHelpers.dart';
 import '../widgets/CustomText.dart';
 
@@ -20,8 +22,8 @@ class _AboutViewState extends State<AboutView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const CustomText(
-          text: 'About',
+        title: CustomText(
+          text: context.read<LanguageBloc>().translate('about_title'),
           fontFamily: 'GoogleSansCode-Medium',
           fontSize: 20.0,
           color: Colors.white,
@@ -105,8 +107,8 @@ class _AppHeader extends StatelessWidget {
             child: const Icon(Icons.shield, size: 50.0, color: Colors.blue),
           ),
           const SizedBox(height: 16.0),
-          const CustomText(
-            text: 'Disaster Relief Coordination',
+          CustomText(
+            text: context.read<LanguageBloc>().translate('app_name'),
             fontFamily: 'GoogleSansCode-Bold',
             fontSize: 24.0,
             color: Colors.white,
@@ -114,8 +116,10 @@ class _AppHeader extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8.0),
-          const CustomText(
-            text: 'Emergency Response & Safety Management',
+          CustomText(
+            text: context.read<LanguageBloc>().translate(
+              'emergency_response_safety',
+            ),
             fontFamily: 'GoogleSansCode-Regular',
             fontSize: 16.0,
             color: Colors.white70,
@@ -156,8 +160,10 @@ class _AppInfoCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12.0),
-                const CustomText(
-                  text: 'App Information',
+                CustomText(
+                  text: context.read<LanguageBloc>().translate(
+                    'app_information',
+                  ),
                   fontFamily: 'GoogleSansCode-Medium',
                   fontSize: 18.0,
                   color: Colors.black87,
@@ -167,23 +173,23 @@ class _AppInfoCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16.0),
-            _buildInfoRow('Version', '1.0.0'),
-            _buildInfoRow('Build Number', '1'),
-            _buildInfoRow('Release Date', '2024'),
+            _buildInfoRow(context, 'version', '1.0.0'),
+            _buildInfoRow(context, 'build_number', '1'),
+            _buildInfoRow(context, 'release_date', '2024'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoRow(BuildContext context, String labelKey, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CustomText(
-            text: label,
+            text: context.read<LanguageBloc>().translate(labelKey),
             fontFamily: 'GoogleSansCode-Regular',
             fontSize: 14.0,
             color: Colors.black54,
@@ -212,23 +218,23 @@ class _FeaturesOverview extends StatelessWidget {
     final features = [
       {
         'icon': SvgHelpers.alert,
-        'title': 'Emergency Alerts',
-        'description': 'Real-time disaster alerts and notifications',
+        'titleKey': 'emergency_alerts',
+        'descriptionKey': 'emergency_alerts_desc',
       },
       {
         'icon': SvgHelpers.person,
-        'title': 'Profile Management',
-        'description': 'Personal information and safety status',
+        'titleKey': 'profile_management',
+        'descriptionKey': 'profile_management_desc',
       },
       {
         'icon': SvgHelpers.mapin,
-        'title': 'Location Services',
-        'description': 'Interactive maps and location tracking',
+        'titleKey': 'location_services',
+        'descriptionKey': 'location_services_desc',
       },
       {
         'icon': SvgHelpers.notification,
-        'title': 'Notifications',
-        'description': 'Instant updates and emergency broadcasts',
+        'titleKey': 'notifications',
+        'descriptionKey': 'notifications_desc',
       },
     ];
 
@@ -254,8 +260,8 @@ class _FeaturesOverview extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12.0),
-                const CustomText(
-                  text: 'Key Features',
+                CustomText(
+                  text: context.read<LanguageBloc>().translate('key_features'),
                   fontFamily: 'GoogleSansCode-Medium',
                   fontSize: 18.0,
                   color: Colors.black87,
@@ -265,14 +271,14 @@ class _FeaturesOverview extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16.0),
-            ...features.map((feature) => _buildFeatureItem(feature)),
+            ...features.map((feature) => _buildFeatureItem(context, feature)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildFeatureItem(Map<String, String> feature) {
+  Widget _buildFeatureItem(BuildContext context, Map<String, String> feature) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -297,7 +303,9 @@ class _FeaturesOverview extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(
-                  text: feature['title']!,
+                  text: context.read<LanguageBloc>().translate(
+                    feature['titleKey']!,
+                  ),
                   fontFamily: 'GoogleSansCode-Medium',
                   fontSize: 16.0,
                   color: Colors.black87,
@@ -306,7 +314,9 @@ class _FeaturesOverview extends StatelessWidget {
                 ),
                 const SizedBox(height: 2.0),
                 CustomText(
-                  text: feature['description']!,
+                  text: context.read<LanguageBloc>().translate(
+                    feature['descriptionKey']!,
+                  ),
                   fontFamily: 'GoogleSansCode-Regular',
                   fontSize: 14.0,
                   color: Colors.black54,
@@ -349,8 +359,8 @@ class _DeveloperInfo extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12.0),
-                const CustomText(
-                  text: 'Developer',
+                CustomText(
+                  text: context.read<LanguageBloc>().translate('developer'),
                   fontFamily: 'GoogleSansCode-Medium',
                   fontSize: 18.0,
                   color: Colors.black87,
@@ -360,8 +370,8 @@ class _DeveloperInfo extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16.0),
-            const CustomText(
-              text: 'Supernova Corp',
+            CustomText(
+              text: context.read<LanguageBloc>().translate('supernova_corp'),
               fontFamily: 'GoogleSansCode-Medium',
               fontSize: 16.0,
               color: Colors.black87,
@@ -369,8 +379,10 @@ class _DeveloperInfo extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8.0),
-            const CustomText(
-              text: 'Building technology for a safer world',
+            CustomText(
+              text: context.read<LanguageBloc>().translate(
+                'building_technology',
+              ),
               fontFamily: 'GoogleSansCode-Regular',
               fontSize: 14.0,
               color: Colors.black54,
@@ -411,8 +423,8 @@ class _ContactInfo extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12.0),
-                const CustomText(
-                  text: 'Contact Us',
+                CustomText(
+                  text: context.read<LanguageBloc>().translate('contact_us'),
                   fontFamily: 'GoogleSansCode-Medium',
                   fontSize: 18.0,
                   color: Colors.black87,
@@ -422,23 +434,23 @@ class _ContactInfo extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16.0),
-            _buildContactRow('Email', 'support@supernovacorp.com'),
-            _buildContactRow('Website', 'www.supernovacorp.com'),
-            _buildContactRow('Support', 'Available 24/7'),
+            _buildContactRow(context, 'email', 'support@supernovacorp.com'),
+            _buildContactRow(context, 'website', 'www.supernovacorp.com'),
+            _buildContactRow(context, 'support', 'Available 24/7'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildContactRow(String label, String value) {
+  Widget _buildContactRow(BuildContext context, String labelKey, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CustomText(
-            text: label,
+            text: context.read<LanguageBloc>().translate(labelKey),
             fontFamily: 'GoogleSansCode-Regular',
             fontSize: 14.0,
             color: Colors.black54,

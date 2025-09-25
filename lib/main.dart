@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:disaster_relief_coordination/src/bloc/AlertBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/LanguageBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/LoginBloc.dart';
+import 'package:disaster_relief_coordination/src/bloc/NotificationBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/PasswordChangeBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/PersonBloc.dart';
 import 'package:disaster_relief_coordination/src/bloc/ProfileBloc.dart';
@@ -10,6 +11,7 @@ import 'package:disaster_relief_coordination/src/bloc/StatusBloc.dart';
 import 'package:disaster_relief_coordination/src/services/LanguageService.dart';
 import 'package:disaster_relief_coordination/src/repository/RegisterRepository.dart';
 import 'package:disaster_relief_coordination/src/services/FirebaseServices.dart';
+import 'package:disaster_relief_coordination/src/services/NotificationService.dart';
 import 'package:disaster_relief_coordination/src/services/PhilippineDisasterService.dart';
 import 'package:disaster_relief_coordination/src/services/GdacsService.dart';
 import 'package:disaster_relief_coordination/src/view/SplashView.dart';
@@ -51,6 +53,11 @@ class MyApp extends StatelessWidget {
             ),
             gdacsService: GdacsService(),
           ),
+        ),
+        BlocProvider<NotificationBloc>(
+          create: (context) =>
+              NotificationBloc(notificationService: NotificationService())
+                ..add(const LoadNotifications()),
         ),
         BlocProvider<RegisterBloc>(create: (context) => RegisterBloc()),
       ],

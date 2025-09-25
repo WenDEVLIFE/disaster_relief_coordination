@@ -1,9 +1,11 @@
+import 'package:disaster_relief_coordination/src/bloc/LanguageBloc.dart';
 import 'package:disaster_relief_coordination/src/helpers/SvgHelpers.dart';
 import 'package:disaster_relief_coordination/src/view/AlertView.dart';
 import 'package:disaster_relief_coordination/src/view/ReliefCenterScreen.dart';
 import 'package:disaster_relief_coordination/src/widgets/CustomText.dart';
 import 'package:disaster_relief_coordination/src/widgets/PanelWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'MyStatusView.dart';
 import 'SettingView.dart';
@@ -18,8 +20,8 @@ class DashboardView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const CustomText(
-          text: 'Home',
+        title: CustomText(
+          text: context.read<LanguageBloc>().translate('home'),
           fontFamily: 'GoogleSansCode',
           fontSize: 30,
           color: Colors.black,
@@ -36,7 +38,7 @@ class DashboardView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 PanelWidget(
-                  label: 'Alerts & Warnings',
+                  labelKey: 'alerts_warnings',
                   svgPath: SvgHelpers.alert,
                   onTap: () {
                     print('Alerts & Warnings tapped');
@@ -53,7 +55,7 @@ class DashboardView extends StatelessWidget {
                 ),
                 SizedBox(width: screenWidth * 0.05), // Spacing between panels
                 PanelWidget(
-                  label: 'Relief Centers',
+                  labelKey: 'relief_centers',
                   svgPath: SvgHelpers.mapin,
                   onTap: () {
                     Navigator.push(
@@ -73,7 +75,7 @@ class DashboardView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 PanelWidget(
-                  label: 'My Status',
+                  labelKey: 'my_status',
                   svgPath: SvgHelpers.person,
                   onTap: () {
                     Navigator.push(
@@ -88,7 +90,7 @@ class DashboardView extends StatelessWidget {
                 ),
                 SizedBox(width: screenWidth * 0.05), // Spacing between panels
                 PanelWidget(
-                  label: 'Settings',
+                  labelKey: 'settings',
                   svgPath: SvgHelpers.settings,
                   onTap: () {
                     Navigator.push(

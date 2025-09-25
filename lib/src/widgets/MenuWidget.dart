@@ -4,6 +4,7 @@ import 'package:disaster_relief_coordination/src/helpers/SvgHelpers.dart';
 import 'package:disaster_relief_coordination/src/view/AboutView.dart';
 import 'package:disaster_relief_coordination/src/view/LanguageView.dart';
 import 'package:disaster_relief_coordination/src/view/LoginView.dart';
+import 'package:disaster_relief_coordination/src/view/NotificationView.dart';
 import 'package:disaster_relief_coordination/src/view/PrivacySecurityView.dart';
 import 'package:disaster_relief_coordination/src/view/ProfileView.dart';
 import 'package:flutter/material.dart';
@@ -75,6 +76,12 @@ class MenuListWidget extends StatelessWidget {
                     );
                   } else if (menuItems[index].titleKey == 'notifications') {
                     // Navigate to Notifications screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotificationView(),
+                      ),
+                    );
                   } else if (menuItems[index].titleKey == 'privacy_security') {
                     Navigator.push(
                       context,

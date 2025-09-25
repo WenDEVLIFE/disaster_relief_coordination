@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/LanguageBloc.dart';
 import '../bloc/ProfileBloc.dart';
 import '../model/PersonModel.dart';
 import '../widgets/CustomText.dart';
@@ -53,8 +54,12 @@ class _ProfileViewState extends State<ProfileView> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please fill in all fields'),
+        SnackBar(
+          content: Text(
+            context.read<LanguageBloc>().translate(
+              'please_fill_profile_fields',
+            ),
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -65,8 +70,8 @@ class _ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const CustomText(
-          text: 'Profile',
+        title: CustomText(
+          text: context.read<LanguageBloc>().translate('profile'),
           fontFamily: 'GoogleSansCode-Medium',
           fontSize: 20.0,
           color: Colors.white,
@@ -84,7 +89,7 @@ class _ProfileViewState extends State<ProfileView> {
         },
         builder: (context, state) {
           if (state.isLoading && state.profile == null) {
-            return const _LoadingView();
+            return _LoadingView();
           }
 
           return SingleChildScrollView(
@@ -115,18 +120,18 @@ class _ProfileViewState extends State<ProfileView> {
 }
 
 class _LoadingView extends StatelessWidget {
-  const _LoadingView();
+  const _LoadingView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(),
           SizedBox(height: 16.0),
           CustomText(
-            text: 'Loading profile...',
+            text: context.read<LanguageBloc>().translate('loading_profile'),
             fontFamily: 'GoogleSansCode-Regular',
             fontSize: 16.0,
             color: Colors.grey,
@@ -159,8 +164,10 @@ class _ProfileHeader extends StatelessWidget {
             child: const Icon(Icons.person, size: 50.0, color: Colors.blue),
           ),
           const SizedBox(height: 16.0),
-          const CustomText(
-            text: 'Personal Information',
+          CustomText(
+            text: context.read<LanguageBloc>().translate(
+              'personal_information',
+            ),
             fontFamily: 'GoogleSansCode-Medium',
             fontSize: 18.0,
             color: Colors.black87,
@@ -203,8 +210,10 @@ class _ProfileInfoCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const CustomText(
-                  text: 'Profile Details',
+                CustomText(
+                  text: context.read<LanguageBloc>().translate(
+                    'profile_details',
+                  ),
                   fontFamily: 'GoogleSansCode-Medium',
                   fontSize: 18.0,
                   color: Colors.black87,
@@ -217,17 +226,19 @@ class _ProfileInfoCard extends StatelessWidget {
                     isEditing ? Icons.close : Icons.edit,
                     color: Colors.blue,
                   ),
-                  tooltip: isEditing ? 'Cancel Edit' : 'Edit Profile',
+                  tooltip: isEditing
+                      ? context.read<LanguageBloc>().translate('cancel_edit')
+                      : context.read<LanguageBloc>().translate('edit_profile'),
                 ),
               ],
             ),
             const SizedBox(height: 20.0),
-            _buildNameField(),
+            _buildNameField(context),
             const SizedBox(height: 16.0),
-            _buildGenderField(),
+            _buildGenderField(context),
             if (isEditing) ...[
               const SizedBox(height: 24.0),
-              _buildActionButtons(),
+              _buildActionButtons(context),
             ],
           ],
         ),
@@ -235,12 +246,12 @@ class _ProfileInfoCard extends StatelessWidget {
     );
   }
 
-  Widget _buildNameField() {
+  Widget _buildNameField(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const CustomText(
-          text: 'Full Name',
+        CustomText(
+          text: context.read<LanguageBloc>().translate('full_name'),
           fontFamily: 'GoogleSansCode-Medium',
           fontSize: 14.0,
           color: Colors.black87,
@@ -250,7 +261,9 @@ class _ProfileInfoCard extends StatelessWidget {
         const SizedBox(height: 8.0),
         isEditing
             ? CustomOutlineTextField(
-                hintext: 'Enter your full name',
+                hintext: context.read<LanguageBloc>().translate(
+                  'enter_full_name',
+                ),
                 controller: nameController,
               )
             : Container(
@@ -265,7 +278,9 @@ class _ProfileInfoCard extends StatelessWidget {
                   border: Border.all(color: Colors.grey.shade300),
                 ),
                 child: CustomText(
-                  text: profile?.name ?? 'Not set',
+                  text:
+                      profile?.name ??
+                      context.read<LanguageBloc>().translate('not_set'),
                   fontFamily: 'GoogleSansCode-Regular',
                   fontSize: 16.0,
                   color: Colors.black87,
@@ -277,12 +292,12 @@ class _ProfileInfoCard extends StatelessWidget {
     );
   }
 
-  Widget _buildGenderField() {
+  Widget _buildGenderField(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const CustomText(
-          text: 'Gender',
+        CustomText(
+          text: context.read<LanguageBloc>().translate('gender'),
           fontFamily: 'GoogleSansCode-Medium',
           fontSize: 14.0,
           color: Colors.black87,
@@ -292,7 +307,7 @@ class _ProfileInfoCard extends StatelessWidget {
         const SizedBox(height: 8.0),
         isEditing
             ? CustomOutlineTextField(
-                hintext: 'Enter your gender',
+                hintext: context.read<LanguageBloc>().translate('enter_gender'),
                 controller: genderController,
               )
             : Container(
@@ -307,7 +322,9 @@ class _ProfileInfoCard extends StatelessWidget {
                   border: Border.all(color: Colors.grey.shade300),
                 ),
                 child: CustomText(
-                  text: profile?.gender ?? 'Not set',
+                  text:
+                      profile?.gender ??
+                      context.read<LanguageBloc>().translate('not_set'),
                   fontFamily: 'GoogleSansCode-Regular',
                   fontSize: 16.0,
                   color: Colors.black87,
@@ -319,7 +336,7 @@ class _ProfileInfoCard extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -332,8 +349,8 @@ class _ProfileInfoCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.0),
               ),
             ),
-            child: const CustomText(
-              text: 'Save Changes',
+            child: CustomText(
+              text: context.read<LanguageBloc>().translate('save_changes'),
               fontFamily: 'GoogleSansCode-Medium',
               fontSize: 16.0,
               color: Colors.white,

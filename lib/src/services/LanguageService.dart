@@ -99,6 +99,9 @@ class LanguageService {
     'emergency_contacts': 'Emergency Contacts',
     'notifications': 'Notifications',
     'alerts': 'Alerts',
+    'alerts_warnings': 'Alerts & Warnings',
+    'relief_centers': 'Relief Centers',
+    'my_status': 'My Status',
     'status': 'Status',
     'safe': 'Safe',
     'unsafe': 'Unsafe',
@@ -121,6 +124,13 @@ class LanguageService {
     'save_changes': 'Save Changes',
     'edit_profile': 'Edit Profile',
     'cancel': 'Cancel',
+    'profile_details': 'Profile Details',
+    'loading_profile': 'Loading profile...',
+    'not_set': 'Not set',
+    'enter_full_name': 'Enter your full name',
+    'enter_gender': 'Enter your gender',
+    'cancel_edit': 'Cancel Edit',
+    'please_fill_profile_fields': 'Please fill in all fields',
 
     // Privacy & Security
     'privacy_security_title': 'Privacy & Security',
@@ -169,6 +179,7 @@ class LanguageService {
     'location_services': 'Location Services',
     'location_services_desc': 'Interactive maps and location tracking',
     'notifications_desc': 'Instant updates and emergency broadcasts',
+    'emergency_response_safety': 'Emergency Response & Safety Management',
     'developer': 'Developer',
     'supernova_corp': 'Supernova Corp',
     'building_technology': 'Building technology for a safer world',
@@ -179,6 +190,16 @@ class LanguageService {
     'support_email': 'support@supernovacorp.com',
     'company_website': 'www.supernovacorp.com',
     'support_24_7': 'Available 24/7',
+
+    // Notifications
+    'clear_all': 'Clear All',
+    'mark_all_read': 'Mark All Read',
+    'loading_notifications': 'Loading notifications...',
+    'no_notifications_yet': 'No notifications yet',
+    'tap_add_sample': 'Tap the + button to add a sample notification',
+    'error_loading_notifications': 'Error loading notifications',
+    'all_notifications_cleared': 'All notifications cleared',
+    'all_notifications_marked_read': 'All notifications marked as read',
 
     // Common Actions
     'ok': 'OK',
@@ -214,6 +235,9 @@ class LanguageService {
     'emergency_contacts': 'Mga Emergency Contact',
     'notifications': 'Mga Abiso',
     'alerts': 'Mga Alerto',
+    'alerts_warnings': 'Mga Alerto at Babala',
+    'relief_centers': 'Mga Sentro ng Tulong',
+    'my_status': 'Aking Katayuan',
     'status': 'Katayuan',
     'safe': 'Ligtas',
     'unsafe': 'Hindi Ligtas',
@@ -236,6 +260,13 @@ class LanguageService {
     'save_changes': 'I-save ang mga Pagbabago',
     'edit_profile': 'I-edit ang Profile',
     'cancel': 'Kanselahin',
+    'profile_details': 'Mga Detalye ng Profile',
+    'loading_profile': 'Naglo-load ng profile...',
+    'not_set': 'Hindi nakatakda',
+    'enter_full_name': 'Ilagay ang iyong buong pangalan',
+    'enter_gender': 'Ilagay ang iyong kasarian',
+    'cancel_edit': 'Kanselahin ang Pag-edit',
+    'please_fill_profile_fields': 'Mangyaring punan ang lahat ng mga patlang',
 
     // Privacy & Security
     'privacy_security_title': 'Pagkapribado at Seguridad',
@@ -287,6 +318,8 @@ class LanguageService {
     'location_services_desc':
         'Interactive na mga mapa at pagsubaybay sa lokasyon',
     'notifications_desc': 'Instant na mga update at emergency broadcast',
+    'emergency_response_safety':
+        'Emergency Response at Pamamahala ng Kaligtasan',
     'developer': 'Developer',
     'supernova_corp': 'Supernova Corp',
     'building_technology': 'Bumubuo ng teknolohiya para sa mas ligtas na mundo',
@@ -332,6 +365,9 @@ class LanguageService {
     'emergency_contacts': 'Mga Emergency Contact',
     'notifications': 'Mga Notipikasyon',
     'alerts': 'Mga Alerto',
+    'alerts_warnings': 'Mga Alerto ug Mga Pahimangno',
+    'relief_centers': 'Mga Sentro sa Tabang',
+    'my_status': 'Akong Kahimtang',
     'status': 'Kahimtang',
     'safe': 'Luwas',
     'unsafe': 'Dili Luwas',
@@ -354,6 +390,13 @@ class LanguageService {
     'save_changes': 'I-save ang mga Kausaban',
     'edit_profile': 'I-edit ang Profile',
     'cancel': 'Kanselahin',
+    'profile_details': 'Mga Detalye sa Profile',
+    'loading_profile': 'Naga-load sa profile...',
+    'not_set': 'Wala matakda',
+    'enter_full_name': 'Isulod ang imong bug-os nga ngalan',
+    'enter_gender': 'Isulod ang imong gender',
+    'cancel_edit': 'Kanselahin ang Pag-edit',
+    'please_fill_profile_fields': 'Palihug pun-a ang tanang mga natad',
 
     // Privacy & Security
     'privacy_security_title': 'Pagkapribado ug Seguridad',
@@ -406,6 +449,7 @@ class LanguageService {
     'location_services_desc':
         'Interactive nga mga mapa ug pagsubay sa lokasyon',
     'notifications_desc': 'Instant nga mga update ug emergency broadcast',
+    'emergency_response_safety': 'Emergency Response ug Safety Management',
     'developer': 'Developer',
     'supernova_corp': 'Supernova Corp',
     'building_technology':
