@@ -25,6 +25,7 @@ class _ProfileViewState extends State<ProfileView> {
     super.initState();
     _nameController = TextEditingController();
     _genderController = TextEditingController();
+    print('ProfileView - Initializing and loading profile data...');
     // Load profile data when view is initialized
     context.read<ProfileBloc>().add(const LoadProfile());
   }
@@ -37,18 +38,30 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   void _updateControllers(PersonModel? profile) {
+    print('ProfileView - Updating controllers with profile: $profile');
+
     if (profile != null) {
+      print('ProfileView - Setting name: ${profile.name}');
+      print('ProfileView - Setting gender: ${profile.gender}');
+
       _nameController.text = profile.name;
       _genderController.text = profile.gender;
 
       // Set the selected gender for radio buttons
       if (profile.gender.toLowerCase() == 'male') {
         selectedGender = Gender.male;
+        print('ProfileView - Set selectedGender to Male');
       } else if (profile.gender.toLowerCase() == 'female') {
         selectedGender = Gender.female;
+        print('ProfileView - Set selectedGender to Female');
       } else {
         selectedGender = null;
+        print('ProfileView - Set selectedGender to null (Other/Unknown)');
       }
+
+      print('ProfileView - Controllers updated successfully');
+    } else {
+      print('ProfileView - Profile is null, not updating controllers');
     }
   }
 
@@ -61,10 +74,23 @@ class _ProfileViewState extends State<ProfileView> {
 
     if (name.isNotEmpty && selectedGender != null) {
       final genderString = selectedGender == Gender.male ? 'Male' : 'Female';
+      print('ProfileView - Saving profile: name=$name, gender=$genderString');
+
       context.read<ProfileBloc>().add(
         UpdateProfile(name: name, gender: genderString),
       );
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profile updated successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
     } else {
+      print(
+        'ProfileView - Validation failed: name=$name, selectedGender=$selectedGender',
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -95,12 +121,24 @@ class _ProfileViewState extends State<ProfileView> {
       ),
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
+          print('ProfileView - State changed:');
+          print('Is Loading: ${state.isLoading}');
+          print('Profile: ${state.profile}');
+          print('Is Editing: ${state.isEditing}');
+
           if (!state.isLoading && state.profile != null) {
+            print('ProfileView - Updating controllers with profile data');
             _updateControllers(state.profile);
           }
         },
         builder: (context, state) {
+          print('ProfileView - Building with state:');
+          print('Is Loading: ${state.isLoading}');
+          print('Profile: ${state.profile}');
+          print('Is Editing: ${state.isEditing}');
+
           if (state.isLoading && state.profile == null) {
+            print('ProfileView - Showing loading view');
             return _LoadingView();
           }
 
@@ -128,6 +166,24 @@ class _ProfileViewState extends State<ProfileView> {
                 const SizedBox(height: 24.0),
                 if (state.isLoading)
                   const Center(child: CircularProgressIndicator()),
+                if (!state.isLoading && state.profile == null)
+                  Center(
+                    child: Column(
+                      children: [
+                        const Text('Failed to load profile data'),
+                        const SizedBox(height: 16.0),
+                        ElevatedButton(
+                          onPressed: () {
+                            print('ProfileView - Retrying profile load');
+                            context.read<ProfileBloc>().add(
+                              const LoadProfile(),
+                            );
+                          },
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  ),
               ],
             ),
           );

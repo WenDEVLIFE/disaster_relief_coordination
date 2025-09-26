@@ -121,17 +121,24 @@ class UserStatusService {
   /// Get user status with gender from user_status collection
   Future<Map<String, dynamic>?> getUserStatusWithGender() async {
     if (_currentUserId == null) {
+      print('UserStatusService - No current user ID found for status');
       return null;
     }
 
     try {
+      print('UserStatusService - Getting user status for ID: $_currentUserId');
       final docSnapshot = await _userStatusCollection.doc(_currentUserId).get();
+
       if (docSnapshot.exists) {
-        return docSnapshot.data() as Map<String, dynamic>;
+        final data = docSnapshot.data() as Map<String, dynamic>;
+        print('UserStatusService - User status found: $data');
+        return data;
+      } else {
+        print('UserStatusService - User status document does not exist');
+        return null;
       }
-      return null;
     } catch (e) {
-      print('Error getting user status with gender: $e');
+      print('UserStatusService - Error getting user status with gender: $e');
       return null;
     }
   }
@@ -183,17 +190,24 @@ class UserStatusService {
   /// Get user profile information
   Future<Map<String, dynamic>?> getUserProfile() async {
     if (_currentUserId == null) {
+      print('UserStatusService - No current user ID found');
       return null;
     }
 
     try {
+      print('UserStatusService - Getting user profile for ID: $_currentUserId');
       final docSnapshot = await _usersCollection.doc(_currentUserId).get();
+
       if (docSnapshot.exists) {
-        return docSnapshot.data() as Map<String, dynamic>;
+        final data = docSnapshot.data() as Map<String, dynamic>;
+        print('UserStatusService - User profile found: $data');
+        return data;
+      } else {
+        print('UserStatusService - User profile document does not exist');
+        return null;
       }
-      return null;
     } catch (e) {
-      print('Error getting user profile: $e');
+      print('UserStatusService - Error getting user profile: $e');
       return null;
     }
   }

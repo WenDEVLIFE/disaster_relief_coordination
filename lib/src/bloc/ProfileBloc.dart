@@ -68,24 +68,43 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       try {
         // Load current user profile from Firebase
         final userProfile = await _userStatusService.getUserProfile();
+        final userStatusData = await _userStatusService
+            .getUserStatusWithGender();
         final currentUserId = _userStatusService.currentUserId;
 
-        if (userProfile != null && currentUserId != null) {
+        print('ProfileBloc - Loading profile data:');
+        print('User Profile: $userProfile');
+        print('User Status Data: $userStatusData');
+        print('Current User ID: $currentUserId');
+
+        if (currentUserId != null) {
+          // Get name from user profile, fallback to user status data
+          final name =
+              userProfile?['name'] ?? userStatusData?['name'] ?? 'Unknown User';
+
+          // Get gender from user status data (more current), fallback to user profile
+          final gender =
+              userStatusData?['gender'] ?? userProfile?['gender'] ?? 'Other';
+
+          // Get status from user status data
+          final status = userStatusData?['isSafe'] == true ? 'Safe' : 'Unsafe';
+
           final profile = PersonModel(
             id: currentUserId,
-            name: userProfile['name'] ?? 'Unknown User',
-            status:
-                'Safe', // Default status, could be loaded from user_status collection
-            gender: userProfile['gender'] ?? 'Other',
+            name: name,
+            status: status,
+            gender: gender,
           );
 
+          print('ProfileBloc - Created profile: $profile');
           emit(state.copyWith(profile: profile, isLoading: false));
         } else {
+          print('ProfileBloc - No current user ID found');
           // Fallback for when user is not authenticated or profile doesn't exist
           emit(state.copyWith(isLoading: false));
         }
       } catch (e) {
-        print('Error loading profile: $e');
+        print('ProfileBloc - Error loading profile: $e');
         emit(state.copyWith(isLoading: false));
       }
     });
@@ -96,13 +115,37 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(state.copyWith(isLoading: true));
 
       try {
-        // Update profile in Firebase using UserStatusService
+        print('ProfileBloc - Updating profile:');
+        print('New name: ${event.name}');
+        print('New gender: ${event.gender}');
+
+        // Update profile in both collections to ensure sync
         await _userStatusService.updateUserProfile(event.name, event.gender);
+
+        // Also update the user_status collection with the new gender
+        await _userStatusService.saveUserStatus(
+          state.profile!.status == 'Safe',
+          gender: event.gender,
+        );
 
         final updatedProfile = state.profile!.copyWith(
           name: event.name,
           gender: event.gender,
         );
+
+        print('ProfileBloc - Profile updated successfully');
+
+        // Trigger a refresh of the status view to reflect gender changes
+        // This will update the MyStatusView with the new gender data
+        try {
+          await _userStatusService.saveUserStatus(
+            updatedProfile.status == 'Safe',
+            gender: event.gender,
+          );
+          print('ProfileBloc - User status updated with new gender');
+        } catch (e) {
+          print('ProfileBloc - Error updating user status: $e');
+        }
 
         emit(
           state.copyWith(
@@ -112,7 +155,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           ),
         );
       } catch (e) {
-        print('Error updating profile: $e');
+        print('ProfileBloc - Error updating profile: $e');
         emit(state.copyWith(isLoading: false));
       }
     });
