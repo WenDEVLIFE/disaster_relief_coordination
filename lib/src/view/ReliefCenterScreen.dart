@@ -17,27 +17,11 @@ class _ReliefCenterScreenState extends State<ReliefCenterScreen> {
   final List<ReliefCenter> _reliefCenters = [
     ReliefCenter(
       id: '1',
-      name: 'Main Relief Center',
-      location: LatLng(14.5995, 120.9842), // Manila coordinates
+      name: 'Dacudao Relief Center',
+      location: LatLng(7.215508397624287, 125.47460872970882), // Manila coordinates
       address: 'Manila, Philippines',
       capacity: 500,
       currentOccupancy: 320,
-    ),
-    ReliefCenter(
-      id: '2',
-      name: 'Regional Relief Center',
-      location: LatLng(14.6050, 120.9800),
-      address: 'Quezon City, Philippines',
-      capacity: 300,
-      currentOccupancy: 180,
-    ),
-    ReliefCenter(
-      id: '3',
-      name: 'Community Relief Center',
-      location: LatLng(14.5800, 120.9700),
-      address: 'Makati City, Philippines',
-      capacity: 200,
-      currentOccupancy: 150,
     ),
   ];
 
@@ -111,7 +95,7 @@ class _ReliefCenterScreenState extends State<ReliefCenterScreen> {
             child: FlutterMap(
               mapController: _mapController,
               options: MapOptions(
-                initialCenter: LatLng(14.5995, 120.9842),
+                initialCenter: LatLng(7.21919328760695, 125.46491229398096),
                 initialZoom: 12.0,
                 maxZoom: 18.0,
                 minZoom: 5.0,
