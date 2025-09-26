@@ -1,6 +1,8 @@
 import 'package:disaster_relief_coordination/src/model/EmergencyContactModel.dart';
 import 'package:disaster_relief_coordination/src/widgets/CustomText.dart';
+import 'package:disaster_relief_coordination/src/bloc/LanguageBloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -11,39 +13,9 @@ class EmergencyContactView extends StatelessWidget {
   final List<EmergencyContactModel> emergencyContacts = [
     EmergencyContactModel(
       id: '1',
-      name: 'Emergency Services',
-      phoneNumber: '911',
+      name: 'Baguio proper Emergency Hßotline',
+      phoneNumber: '09233346724',
       description: 'General Emergency',
-    ),
-    EmergencyContactModel(
-      id: '2',
-      name: 'Police Department',
-      phoneNumber: '117',
-      description: 'Police Emergency',
-    ),
-    EmergencyContactModel(
-      id: '3',
-      name: 'Fire Department',
-      phoneNumber: '118',
-      description: 'Fire Emergency',
-    ),
-    EmergencyContactModel(
-      id: '4',
-      name: 'Medical Emergency',
-      phoneNumber: '119',
-      description: 'Ambulance Services',
-    ),
-    EmergencyContactModel(
-      id: '5',
-      name: 'Disaster Hotline',
-      phoneNumber: '112',
-      description: 'National Disaster Response',
-    ),
-    EmergencyContactModel(
-      id: '6',
-      name: 'Coast Guard',
-      phoneNumber: '120',
-      description: 'Maritime Emergency',
     ),
   ];
 
@@ -74,7 +46,7 @@ class EmergencyContactView extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Unable to make phone call. Please dial $phoneNumber manually.',
+              '${context.read<LanguageBloc>().translate('unable_to_make_phone_call')} $phoneNumber ${context.read<LanguageBloc>().translate('manually')}',
             ),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 4),
@@ -92,7 +64,7 @@ class EmergencyContactView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: CustomText(
-          text: 'Emergency Contacts',
+          text: context.read<LanguageBloc>().translate('emergency_contacts'),
           fontFamily: 'GoogleSansCode',
           fontSize: 30,
           color: Colors.black,

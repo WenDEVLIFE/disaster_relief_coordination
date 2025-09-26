@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/DirectionsBloc.dart';
+import '../bloc/LanguageBloc.dart';
 
 class ReliefCenterScreen extends StatelessWidget {
   const ReliefCenterScreen({super.key});
@@ -16,7 +17,11 @@ class ReliefCenterScreen extends StatelessWidget {
           if (state is DirectionsLoaded) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Directions loaded successfully!'),
+                content: Text(
+                  context.read<LanguageBloc>().translate(
+                    'directions_loaded_successfully',
+                  ),
+                ),
                 backgroundColor: Colors.green,
                 duration: const Duration(seconds: 2),
               ),
@@ -95,9 +100,9 @@ class _ReliefCenterScreenState extends State<_ReliefCenterScreenContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Relief Centers',
-          style: TextStyle(
+        title: Text(
+          context.read<LanguageBloc>().translate('relief_centers'),
+          style: const TextStyle(
             fontFamily: 'GoogleSansCode',
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -114,7 +119,9 @@ class _ReliefCenterScreenState extends State<_ReliefCenterScreenContent> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search relief centers...',
+                hintText: context.read<LanguageBloc>().translate(
+                  'search_relief_centers',
+                ),
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
@@ -245,7 +252,9 @@ class ReliefCenterCard extends StatelessWidget {
     // Show a snackbar to indicate directions are being loaded
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Getting directions to ${center.name}...'),
+        content: Text(
+          '${context.read<LanguageBloc>().translate('getting_directions_to')} ${center.name}...',
+        ),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -323,9 +332,9 @@ class ReliefCenterCard extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: () => _getDirections(context),
                     icon: const Icon(Icons.directions, size: 16),
-                    label: const Text(
-                      'Get Directions',
-                      style: TextStyle(
+                    label: Text(
+                      context.read<LanguageBloc>().translate('get_directions'),
+                      style: const TextStyle(
                         fontFamily: 'GoogleSansCode',
                         fontSize: 12,
                       ),
