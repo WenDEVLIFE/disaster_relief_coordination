@@ -23,25 +23,31 @@ class SafeCardWidget extends StatelessWidget {
           text: person.name,
           fontFamily: 'GoogleSansCode',
           fontSize: 20,
-          color: Colors.black ,
+          color: Colors.black,
           fontWeight: FontWeight.w700,
           textAlign: TextAlign.left,
         ),
-        subtitle:Row(
+        subtitle: Row(
           children: [
-            CircleWidget(radius: 10, color: person.status == 'Safe' ? ColorHelpers.safeColor : ColorHelpers.safeColor
+            CircleWidget(
+              radius: 10,
+              color: person.status == 'Safe'
+                  ? ColorHelpers.safeColor
+                  : Colors.red,
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             CustomText(
               text: person.status,
               fontFamily: 'GoogleSansCode',
               fontSize: 18,
-              color: Colors.black ,
+              color: person.status == 'Safe'
+                  ? ColorHelpers.safeColor
+                  : Colors.red,
               fontWeight: FontWeight.w700,
               textAlign: TextAlign.left,
             ),
           ],
-        )
+        ),
       ),
     );
   }
