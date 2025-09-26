@@ -1,9 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import '../services/UserStatusService.dart';
 
 abstract class RegisterRepository {
-  Future<void> registerUser(String email, String password, String name);
+  Future<void> registerUser(
+    String email,
+    String password,
+    String name, {
+    String? gender,
+  });
   Future<void> changePassword(String currentPassword, String newPassword);
 }
 
@@ -12,7 +18,12 @@ class RegisterRepositoryImpl extends RegisterRepository {
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
   @override
-  Future<void> registerUser(String email, String password, String name) async {
+  Future<void> registerUser(
+    String email,
+    String password,
+    String name, {
+    String? gender,
+  }) async {
     try {
       final userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -24,8 +35,17 @@ class RegisterRepositoryImpl extends RegisterRepository {
       await db.collection('users').doc(uid).set({
         'Email': email,
         'FullName': name,
+        'gender': gender ?? 'Other',
         'createdAt': FieldValue.serverTimestamp(),
       });
+
+      // Also save profile using UserStatusService for consistency
+      final userStatusService = UserStatusService();
+      await userStatusService.saveUserProfileDuringRegistration(
+        name,
+        gender ?? 'Other',
+      );
+
       Fluttertoast.showToast(msg: "Registration Successful");
     } catch (e) {
       Fluttertoast.showToast(msg: "Registration failed: $e");

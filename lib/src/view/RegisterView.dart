@@ -20,92 +20,199 @@ class RegisterView extends StatefulWidget {
 class _RegisterViewState extends State<RegisterView> {
   final TextEditingController controller = TextEditingController();
   late RegisterBloc registerBloc;
+  Gender? selectedGender;
 
   @override
   void initState() {
     super.initState();
     registerBloc = RegisterBloc();
-
   }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(padding: EdgeInsets.all(16.0),
-                child:  CustomText(text: 'Register', fontFamily: 'Roboto', fontSize: 20, color: Colors.black, fontWeight: FontWeight.w700, textAlign: TextAlign.center),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CustomText(
+                text: 'Register',
+                fontFamily: 'Roboto',
+                fontSize: 20,
+                color: Colors.black,
+                fontWeight: FontWeight.w700,
+                textAlign: TextAlign.center,
               ),
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: SizedBox(
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: SizedBox(
+                width: screenWidth * 0.25,
+                height: screenHeight * 0.1,
+                child: SvgPicture.asset(
+                  SvgHelpers.person,
                   width: screenWidth * 0.25,
                   height: screenHeight * 0.1,
-                  child: SvgPicture.asset(
-                    SvgHelpers.person,
-                    width: screenWidth * 0.25,
-                    height: screenHeight * 0.1,
-                    fit: BoxFit.cover,
-                    colorFilter: ColorFilter.mode(Colors.blue, BlendMode.srcIn)
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.mode(Colors.blue, BlendMode.srcIn),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CustomOutlineTextField(
+                hintext: 'Full Name',
+                controller: registerBloc.nameController,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CustomOutlineTextField(
+                hintext: 'Email',
+                controller: registerBloc.emailController,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CustomOutlinePassField(
+                hintext: 'Password',
+                controller: registerBloc.passwordController,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CustomOutlinePassField(
+                hintext: 'Confirm Password',
+                controller: registerBloc.confirmPasswordController,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    text: 'Gender',
+                    fontFamily: 'Roboto',
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                    textAlign: TextAlign.left,
                   ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RadioListTile<Gender>(
+                          title: CustomText(
+                            text: 'Male',
+                            fontFamily: 'Roboto',
+                            fontSize: 14,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            textAlign: TextAlign.left,
+                          ),
+                          value: Gender.male,
+                          groupValue: selectedGender,
+                          onChanged: (Gender? value) {
+                            setState(() {
+                              selectedGender = value;
+                            });
+                          },
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                        ),
+                      ),
+                      Expanded(
+                        child: RadioListTile<Gender>(
+                          title: CustomText(
+                            text: 'Female',
+                            fontFamily: 'Roboto',
+                            fontSize: 14,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            textAlign: TextAlign.left,
+                          ),
+                          value: Gender.female,
+                          groupValue: selectedGender,
+                          onChanged: (Gender? value) {
+                            setState(() {
+                              selectedGender = value;
+                            });
+                          },
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CustomButton(
+                hintText: 'Register',
+                fontFamily: 'Roboto',
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                onPressed: () {
+                  if (registerBloc.emailController.text.isEmpty ||
+                      registerBloc.passwordController.text.isEmpty ||
+                      registerBloc.confirmPasswordController.text.isEmpty ||
+                      registerBloc.nameController.text.isEmpty ||
+                      selectedGender == null) {
+                    Fluttertoast.showToast(
+                      msg:
+                          "Please fill all the fields including gender selection",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.grey,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                    return;
+                  }
+
+                  // Set gender in RegisterBloc
+                  registerBloc.selectedGender = selectedGender;
+
+                  registerBloc.sendCode(context);
+                  openOTPDialog();
+                },
+                width: screenWidth * 0.8,
+                height: screenHeight * 0.05,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: GestureDetector(
+                onTap: () {
+                  // Navigate to forgot password screen
+                  print('login tapped');
+                  Navigator.pop(context);
+                },
+                child: CustomText(
+                  text: "Already have an account? Click me to login",
+                  fontFamily: 'Roboto',
+                  fontSize: 16,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w700,
+                  textAlign: TextAlign.center,
                 ),
               ),
-              Padding(padding: EdgeInsets.all(16.0),
-                child: CustomOutlineTextField(hintext: 'Full Name', controller: registerBloc.nameController),
-              ),
-              Padding(padding: EdgeInsets.all(16.0),
-                child: CustomOutlineTextField(hintext: 'Email', controller: registerBloc.emailController),
-              ),
-              Padding(padding: EdgeInsets.all(16.0),
-                child: CustomOutlinePassField(hintext: 'Password', controller: registerBloc.passwordController),
-              ),
-              Padding(padding: EdgeInsets.all(16.0),
-                child: CustomOutlinePassField(hintext: 'Confirm Password', controller: registerBloc.confirmPasswordController),
-              ),
-              Padding(padding: EdgeInsets.all(16.0),
-                child:  CustomButton(hintText: 'Register', fontFamily: 'Roboto', fontSize: 20, fontWeight: FontWeight.w700, onPressed: (){
-
-                if (registerBloc.emailController.text.isEmpty ||
-                    registerBloc.passwordController.text.isEmpty ||
-                    registerBloc.confirmPasswordController.text.isEmpty ||
-                    registerBloc.nameController.text.isEmpty) {
-                  Fluttertoast.showToast(
-                    msg: "Please fill all the fields",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.grey,
-                    textColor: Colors.white,
-                    fontSize: 16.0,
-                  );
-                  return;
-                }
-
-                registerBloc.sendCode(context);
-                openOTPDialog();
-                }, width: screenWidth * 0.8, height: screenHeight * 0.05 ),
-              ),
-              Padding(padding: EdgeInsets.all(16.0),
-                child:  GestureDetector(
-                  onTap: (){
-                    // Navigate to forgot password screen
-                    print('login tapped');
-                    Navigator.pop(context);
-                  },
-                  child: CustomText(text: "Already have an account? Click me to login", fontFamily: 'Roboto', fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w700, textAlign: TextAlign.center),
-                ),
-              ),
-            ],
-          )
+            ),
+          ],
+        ),
       ),
     );
   }
 
   void openOTPDialog() {
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -135,39 +242,41 @@ class _RegisterViewState extends State<RegisterView> {
                 fontSize: 16,
                 color: Colors.black,
                 fontWeight: FontWeight.w700,
-                textAlign:  TextAlign.center,
+                textAlign: TextAlign.center,
               ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CustomText(
-                    text:  'Time left: $secondsLeft seconds',
+                    text: 'Time left: $secondsLeft seconds',
                     fontFamily: 'EB Garamond',
                     fontSize: 20,
                     color: Colors.black,
                     fontWeight: FontWeight.w700,
-                    textAlign:  TextAlign.center,
+                    textAlign: TextAlign.center,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: SizedBox(
                       width: screenWidth * 0.9,
                       height: screenHeight * 0.05,
-                      child:  CustomOutlineTextField(hintext: 'Verification Code', controller: registerBloc.otpController),
+                      child: CustomOutlineTextField(
+                        hintext: 'Verification Code',
+                        controller: registerBloc.otpController,
+                      ),
                     ),
                   ),
                 ],
               ),
               actions: <Widget>[
-
                 TextButton(
-                  child:CustomText(
+                  child: CustomText(
                     text: 'Cancel',
                     fontFamily: 'EB Garamond',
                     fontSize: 20,
                     color: Colors.black,
                     fontWeight: FontWeight.w700,
-                    textAlign:  TextAlign.center,
+                    textAlign: TextAlign.center,
                   ),
                   onPressed: () {
                     timer?.cancel();
@@ -175,7 +284,7 @@ class _RegisterViewState extends State<RegisterView> {
                   },
                 ),
                 TextButton(
-                  child:CustomText(
+                  child: CustomText(
                     text: 'Resend',
                     fontFamily: 'EB Garamond',
                     fontSize: 20,
@@ -214,24 +323,24 @@ class _RegisterViewState extends State<RegisterView> {
                   onPressed: secondsLeft == 0
                       ? null
                       : () async {
-
-                    if (registerBloc.otpController.text == registerBloc.otpCode) {
-                      await registerBloc.register(context);
-                      timer?.cancel();
-                      Navigator.of(context).pop();
-                      Navigator.pop(context);
-                    } else {
-                      Fluttertoast.showToast(
-                        msg: "Invalid OTP",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.grey,
-                        textColor: Colors.white,
-                        fontSize: 16.0,
-                      );
-                    }
-                  },
+                          if (registerBloc.otpController.text ==
+                              registerBloc.otpCode) {
+                            await registerBloc.register(context);
+                            timer?.cancel();
+                            Navigator.of(context).pop();
+                            Navigator.pop(context);
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: "Invalid OTP",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.grey,
+                              textColor: Colors.white,
+                              fontSize: 16.0,
+                            );
+                          }
+                        },
                   child: CustomText(
                     text: 'Submit',
                     fontFamily: 'EB Garamond',
@@ -248,5 +357,4 @@ class _RegisterViewState extends State<RegisterView> {
       },
     );
   }
-
 }

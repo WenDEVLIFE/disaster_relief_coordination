@@ -95,28 +95,26 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
 
     on<AddCurrentUser>((event, emit) {
       final currentState = state;
-      if (currentState is PersonState) {
-        final people = currentState.people;
-        final currentUserIndex = people.indexWhere(
-          (person) => person.id == event.currentUser.id,
-        );
+      final people = currentState.people;
+      final currentUserIndex = people.indexWhere(
+        (person) => person.id == event.currentUser.id,
+      );
 
-        if (currentUserIndex == -1) {
-          // Add current user to the list
-          final updatedPeople = [...people, event.currentUser];
-          emit(PersonState(updatedPeople));
-        } else {
-          // Update existing current user
-          final updatedPeople = people.map((person) {
-            if (person.id == event.currentUser.id) {
-              return event.currentUser;
-            }
-            return person;
-          }).toList();
-          emit(PersonState(updatedPeople));
-        }
+      if (currentUserIndex == -1) {
+        // Add current user to the list
+        final updatedPeople = [...people, event.currentUser];
+        emit(PersonState(updatedPeople));
+      } else {
+        // Update existing current user
+        final updatedPeople = people.map((person) {
+          if (person.id == event.currentUser.id) {
+            return event.currentUser;
+          }
+          return person;
+        }).toList();
+        emit(PersonState(updatedPeople));
       }
-    });
+        });
   }
 
   void _loadUsersFromFirebase(Emitter<PersonState> emit) async {

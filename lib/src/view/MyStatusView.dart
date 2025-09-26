@@ -75,12 +75,25 @@ class _MyStatusViewState extends State<MyStatusView> {
   Future<void> _loadSavedStatus() async {
     try {
       final userStatusService = UserStatusService();
-      final currentUserStatus = await userStatusService.getUserStatus();
-      final lastUpdated = await userStatusService.getLastUpdated();
+      final userStatusData = await userStatusService.getUserStatusWithGender();
+      final userProfile = await userStatusService.getUserProfile();
 
       setState(() {
-        _isSafe = currentUserStatus;
-        _lastUpdated = lastUpdated;
+        if (userStatusData != null) {
+          _isSafe = userStatusData['isSafe'] ?? true;
+          _lastUpdated = userStatusData['timestamp'] != null
+              ? _formatTimestamp(userStatusData['timestamp'])
+              : 'Never';
+        } else {
+          _isSafe = true;
+          _lastUpdated = 'Never';
+        }
+
+        // Update current user with gender information from user_status collection
+        if (userStatusData != null && _currentUser != null) {
+          final gender = userStatusData['gender'] ?? 'Other';
+          _currentUser = _currentUser!.copyWith(gender: gender);
+        }
       });
     } catch (e) {
       print('Error loading saved status: $e');
@@ -97,10 +110,21 @@ class _MyStatusViewState extends State<MyStatusView> {
     }
   }
 
+  String _formatTimestamp(String timestamp) {
+    try {
+      final dateTime = DateTime.parse(timestamp);
+      return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return 'Never';
+    }
+  }
+
   Future<void> _saveStatus() async {
     try {
       final userStatusService = UserStatusService();
-      await userStatusService.saveUserStatus(_isSafe);
+      // Get current user gender from the current user model
+      final currentGender = _currentUser?.gender ?? 'Other';
+      await userStatusService.saveUserStatus(_isSafe, gender: currentGender);
 
       // Update current user in the list
       setState(() {
@@ -161,23 +185,40 @@ class _MyStatusViewState extends State<MyStatusView> {
     }
   }
 
-  void _updateCurrentUserInList() {
-    // Create current user if not exists
-    if (_currentUser == null) {
-      _currentUser = PersonModel(
-        id: 'current_user',
-        name: 'You',
-        status: _isSafe ? 'Safe' : 'Unsafe',
-        gender: 'Other',
-      );
-    } else {
-      _currentUser = _currentUser!.copyWith(
-        status: _isSafe ? 'Safe' : 'Unsafe',
-      );
-    }
+  void _updateCurrentUserInList() async {
+    try {
+      final userStatusService = UserStatusService();
+      final currentUserId = userStatusService.currentUserId;
 
-    // Add current user to the list using the BLoC event
-    context.read<PersonBloc>().add(AddCurrentUser(_currentUser!));
+      if (currentUserId == null) {
+        print('Current user ID is null');
+        return;
+      }
+
+      // Get user status data to get gender from user_status collection
+      final userStatusData = await userStatusService.getUserStatusWithGender();
+      final gender = userStatusData?['gender'] ?? 'Other';
+
+      // Create current user if not exists
+      if (_currentUser == null) {
+        _currentUser = PersonModel(
+          id: currentUserId,
+          name: 'You',
+          status: _isSafe ? 'Safe' : 'Unsafe',
+          gender: gender,
+        );
+      } else {
+        _currentUser = _currentUser!.copyWith(
+          status: _isSafe ? 'Safe' : 'Unsafe',
+          gender: gender,
+        );
+      }
+
+      // Add current user to the list using the BLoC event
+      context.read<PersonBloc>().add(AddCurrentUser(_currentUser!));
+    } catch (e) {
+      print('Error updating current user in list: $e');
+    }
   }
 
   @override

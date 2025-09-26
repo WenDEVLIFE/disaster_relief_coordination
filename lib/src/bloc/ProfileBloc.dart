@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../model/PersonModel.dart';
+import '../services/UserStatusService.dart';
 
 // Profile Events
 abstract class ProfileEvent extends Equatable {
@@ -58,22 +59,35 @@ class ProfileState extends Equatable {
 
 // Profile Bloc
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
+  final UserStatusService _userStatusService = UserStatusService();
+
   ProfileBloc() : super(const ProfileState()) {
     on<LoadProfile>((event, emit) async {
       emit(state.copyWith(isLoading: true));
 
-      // Simulate loading profile data
-      await Future.delayed(const Duration(milliseconds: 500));
+      try {
+        // Load current user profile from Firebase
+        final userProfile = await _userStatusService.getUserProfile();
+        final currentUserId = _userStatusService.currentUserId;
 
-      // Load current user profile (in a real app, this would come from authentication/user service)
-      final profile = PersonModel(
-        id: 'current_user',
-        name: 'John Doe',
-        status: 'Safe',
-        gender: 'Male',
-      );
+        if (userProfile != null && currentUserId != null) {
+          final profile = PersonModel(
+            id: currentUserId,
+            name: userProfile['name'] ?? 'Unknown User',
+            status:
+                'Safe', // Default status, could be loaded from user_status collection
+            gender: userProfile['gender'] ?? 'Other',
+          );
 
-      emit(state.copyWith(profile: profile, isLoading: false));
+          emit(state.copyWith(profile: profile, isLoading: false));
+        } else {
+          // Fallback for when user is not authenticated or profile doesn't exist
+          emit(state.copyWith(isLoading: false));
+        }
+      } catch (e) {
+        print('Error loading profile: $e');
+        emit(state.copyWith(isLoading: false));
+      }
     });
 
     on<UpdateProfile>((event, emit) async {
@@ -81,21 +95,26 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
       emit(state.copyWith(isLoading: true));
 
-      // Simulate updating profile
-      await Future.delayed(const Duration(milliseconds: 500));
+      try {
+        // Update profile in Firebase using UserStatusService
+        await _userStatusService.updateUserProfile(event.name, event.gender);
 
-      final updatedProfile = state.profile!.copyWith(
-        name: event.name,
-        gender: event.gender,
-      );
+        final updatedProfile = state.profile!.copyWith(
+          name: event.name,
+          gender: event.gender,
+        );
 
-      emit(
-        state.copyWith(
-          profile: updatedProfile,
-          isLoading: false,
-          isEditing: false,
-        ),
-      );
+        emit(
+          state.copyWith(
+            profile: updatedProfile,
+            isLoading: false,
+            isEditing: false,
+          ),
+        );
+      } catch (e) {
+        print('Error updating profile: $e');
+        emit(state.copyWith(isLoading: false));
+      }
     });
 
     on<ToggleEditMode>((event, emit) {

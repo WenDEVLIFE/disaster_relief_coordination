@@ -6,6 +6,8 @@ import '../model/PersonModel.dart';
 import '../widgets/CustomText.dart';
 import '../widgets/CustomOutlineTextField.dart';
 
+enum Gender { male, female }
+
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
 
@@ -16,6 +18,7 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> {
   late TextEditingController _nameController;
   late TextEditingController _genderController;
+  Gender? selectedGender;
 
   @override
   void initState() {
@@ -37,6 +40,15 @@ class _ProfileViewState extends State<ProfileView> {
     if (profile != null) {
       _nameController.text = profile.name;
       _genderController.text = profile.gender;
+
+      // Set the selected gender for radio buttons
+      if (profile.gender.toLowerCase() == 'male') {
+        selectedGender = Gender.male;
+      } else if (profile.gender.toLowerCase() == 'female') {
+        selectedGender = Gender.female;
+      } else {
+        selectedGender = null;
+      }
     }
   }
 
@@ -46,11 +58,11 @@ class _ProfileViewState extends State<ProfileView> {
 
   void _handleSaveProfile() {
     final name = _nameController.text.trim();
-    final gender = _genderController.text.trim();
 
-    if (name.isNotEmpty && gender.isNotEmpty) {
+    if (name.isNotEmpty && selectedGender != null) {
+      final genderString = selectedGender == Gender.male ? 'Male' : 'Female';
       context.read<ProfileBloc>().add(
-        UpdateProfile(name: name, gender: gender),
+        UpdateProfile(name: name, gender: genderString),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -104,6 +116,12 @@ class _ProfileViewState extends State<ProfileView> {
                   isEditing: state.isEditing,
                   nameController: _nameController,
                   genderController: _genderController,
+                  selectedGender: selectedGender,
+                  onGenderChanged: (gender) {
+                    setState(() {
+                      selectedGender = gender;
+                    });
+                  },
                   onEditToggle: _handleEditToggle,
                   onSave: _handleSaveProfile,
                 ),
@@ -185,6 +203,8 @@ class _ProfileInfoCard extends StatelessWidget {
   final bool isEditing;
   final TextEditingController nameController;
   final TextEditingController genderController;
+  final Gender? selectedGender;
+  final Function(Gender?) onGenderChanged;
   final VoidCallback onEditToggle;
   final VoidCallback onSave;
 
@@ -193,6 +213,8 @@ class _ProfileInfoCard extends StatelessWidget {
     required this.isEditing,
     required this.nameController,
     required this.genderController,
+    required this.selectedGender,
+    required this.onGenderChanged,
     required this.onEditToggle,
     required this.onSave,
   });
@@ -306,9 +328,47 @@ class _ProfileInfoCard extends StatelessWidget {
         ),
         const SizedBox(height: 8.0),
         isEditing
-            ? CustomOutlineTextField(
-                hintext: context.read<LanguageBloc>().translate('enter_gender'),
-                controller: genderController,
+            ? Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RadioListTile<Gender>(
+                          title: CustomText(
+                            text: 'Male',
+                            fontFamily: 'GoogleSansCode-Regular',
+                            fontSize: 14.0,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w500,
+                            textAlign: TextAlign.left,
+                          ),
+                          value: Gender.male,
+                          groupValue: selectedGender,
+                          onChanged: onGenderChanged,
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                        ),
+                      ),
+                      Expanded(
+                        child: RadioListTile<Gender>(
+                          title: CustomText(
+                            text: 'Female',
+                            fontFamily: 'GoogleSansCode-Regular',
+                            fontSize: 14.0,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w500,
+                            textAlign: TextAlign.left,
+                          ),
+                          value: Gender.female,
+                          groupValue: selectedGender,
+                          onChanged: onGenderChanged,
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               )
             : Container(
                 width: double.infinity,

@@ -14,6 +14,9 @@ class UserStatusService {
   /// Get current user ID
   String? get _currentUserId => _auth.currentUser?.uid;
 
+  /// Get current user ID (public getter)
+  String? get currentUserId => _currentUserId;
+
   /// Initialize user status service
   Future<void> initialize() async {
     if (_currentUserId == null) {
@@ -22,7 +25,7 @@ class UserStatusService {
   }
 
   /// Save user status to Firestore
-  Future<void> saveUserStatus(bool isSafe) async {
+  Future<void> saveUserStatus(bool isSafe, {String? gender}) async {
     if (_currentUserId == null) {
       throw Exception('User not authenticated');
     }
@@ -32,6 +35,7 @@ class UserStatusService {
       'isSafe': isSafe,
       'lastUpdated': FieldValue.serverTimestamp(),
       'timestamp': DateTime.now().toIso8601String(),
+      'gender': gender ?? 'Other', // Save gender if provided
     };
 
     // Save to user_status collection
@@ -41,6 +45,7 @@ class UserStatusService {
     await _usersCollection.doc(_currentUserId).set({
       'lastStatusUpdate': FieldValue.serverTimestamp(),
       'isSafe': isSafe,
+      'gender': gender ?? 'Other',
     }, SetOptions(merge: true));
   }
 
@@ -86,21 +91,49 @@ class UserStatusService {
     }
   }
 
-  /// Stream of all user statuses for real-time updates
+  /// Stream of all user statuses for real-time updates (excludes current user)
   Stream<List<PersonModel>> getAllUserStatuses() {
     return _userStatusCollection.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        return PersonModel(
-          id: data['userId'] ?? doc.id,
-          name: data['userId'] == _currentUserId
-              ? 'You'
-              : 'User ${doc.id.substring(0, 6)}',
-          status: data['isSafe'] == true ? 'Safe' : 'Unsafe',
-          gender: 'Other', // You might want to add gender field to Firestore
-        );
-      }).toList();
+      return snapshot.docs
+          .map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            final userId = data['userId'] ?? doc.id;
+            final isCurrentUser = userId == _currentUserId;
+
+            // Skip current user - they will be added separately
+            if (isCurrentUser) {
+              return null;
+            }
+
+            return PersonModel(
+              id: userId,
+              name: 'User ${userId.substring(0, 6)}',
+              status: data['isSafe'] == true ? 'Safe' : 'Unsafe',
+              gender: data['gender'] ?? 'Other',
+            );
+          })
+          .where((person) => person != null)
+          .cast<PersonModel>()
+          .toList();
     });
+  }
+
+  /// Get user status with gender from user_status collection
+  Future<Map<String, dynamic>?> getUserStatusWithGender() async {
+    if (_currentUserId == null) {
+      return null;
+    }
+
+    try {
+      final docSnapshot = await _userStatusCollection.doc(_currentUserId).get();
+      if (docSnapshot.exists) {
+        return docSnapshot.data() as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      print('Error getting user status with gender: $e');
+      return null;
+    }
   }
 
   /// Stream of current user status for real-time updates
@@ -128,6 +161,22 @@ class UserStatusService {
       'name': name,
       'gender': gender,
       'lastProfileUpdate': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
+  /// Save user profile during registration
+  Future<void> saveUserProfileDuringRegistration(
+    String name,
+    String gender,
+  ) async {
+    if (_currentUserId == null) {
+      throw Exception('User not authenticated');
+    }
+
+    await _usersCollection.doc(_currentUserId).set({
+      'name': name,
+      'gender': gender,
+      'createdAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
 

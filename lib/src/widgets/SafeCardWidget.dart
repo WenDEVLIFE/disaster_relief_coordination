@@ -17,7 +17,7 @@ class SafeCardWidget extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           radius: 28,
-          backgroundImage: AssetImage(ImageHelper.man),
+          backgroundImage: AssetImage(ImageHelper.getPersonIcon(person.gender)),
         ),
         title: CustomText(
           text: person.name,
