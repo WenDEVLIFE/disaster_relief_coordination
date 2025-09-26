@@ -1,15 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/DirectionsBloc.dart';
 
-class ReliefCenterScreen extends StatefulWidget {
+class ReliefCenterScreen extends StatelessWidget {
   const ReliefCenterScreen({super.key});
 
   @override
-  State<ReliefCenterScreen> createState() => _ReliefCenterScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => DirectionsBloc(),
+      child: BlocListener<DirectionsBloc, DirectionsState>(
+        listener: (context, state) {
+          if (state is DirectionsLoaded) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Directions loaded successfully!'),
+                backgroundColor: Colors.green,
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          } else if (state is DirectionsError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+          }
+        },
+        child: const _ReliefCenterScreenContent(),
+      ),
+    );
+  }
 }
 
-class _ReliefCenterScreenState extends State<ReliefCenterScreen> {
+class _ReliefCenterScreenContent extends StatefulWidget {
+  const _ReliefCenterScreenContent();
+
+  @override
+  State<_ReliefCenterScreenContent> createState() => _ReliefCenterScreenState();
+}
+
+class _ReliefCenterScreenState extends State<_ReliefCenterScreenContent> {
   final MapController _mapController = MapController();
   final TextEditingController _searchController = TextEditingController();
 
@@ -18,7 +53,10 @@ class _ReliefCenterScreenState extends State<ReliefCenterScreen> {
     ReliefCenter(
       id: '1',
       name: 'Dacudao Relief Center',
-      location: LatLng(7.215508397624287, 125.47460872970882), // Manila coordinates
+      location: LatLng(
+        7.215508397624287,
+        125.47460872970882,
+      ), // Manila coordinates
       address: 'Manila, Philippines',
       capacity: 500,
       currentOccupancy: 320,
@@ -195,6 +233,24 @@ class ReliefCenterCard extends StatelessWidget {
     required this.onTap,
   });
 
+  void _getDirections(BuildContext context) {
+    context.read<DirectionsBloc>().add(
+      GetDirectionsFromCurrentLocation(
+        destination: center.location,
+        destinationName: center.name,
+        transportMode: 'driving',
+      ),
+    );
+
+    // Show a snackbar to indicate directions are being loaded
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Getting directions to ${center.name}...'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -259,6 +315,35 @@ class ReliefCenterCard extends StatelessWidget {
                 fontSize: 12,
                 color: Colors.grey,
               ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _getDirections(context),
+                    icon: const Icon(Icons.directions, size: 16),
+                    label: const Text(
+                      'Get Directions',
+                      style: TextStyle(
+                        fontFamily: 'GoogleSansCode',
+                        fontSize: 12,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
