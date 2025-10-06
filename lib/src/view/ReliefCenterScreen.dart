@@ -62,7 +62,7 @@ class _ReliefCenterScreenState extends State<_ReliefCenterScreenContent> {
         7.215508397624287,
         125.47460872970882,
       ), // Manila coordinates
-      address: 'Manila, Philippines',
+      address: 'Baguio, Proper, Calinan, Davao City',
       capacity: 500,
       currentOccupancy: 320,
     ),
