@@ -1,7 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../model/PersonModel.dart';
+import '../model/FamilyMemberModel.dart';
 import '../services/UserStatusService.dart';
+import '../services/FamilyService.dart';
 
 // Person Events
 abstract class PersonEvent extends Equatable {
@@ -46,6 +48,31 @@ class UpdateUserStatusInFirebase extends PersonEvent {
   List<Object> get props => [isSafe];
 }
 
+class LoadFamilyMembers extends PersonEvent {
+  const LoadFamilyMembers();
+}
+
+class AddFamilyMember extends PersonEvent {
+  final String memberUserId;
+  final String name;
+  final String relationship;
+  final String? gender;
+
+  const AddFamilyMember(this.memberUserId, this.name, this.relationship, this.gender);
+
+  @override
+  List<Object> get props => [memberUserId, name, relationship, gender ?? ''];
+}
+
+class RemoveFamilyMember extends PersonEvent {
+  final String familyMemberId;
+
+  const RemoveFamilyMember(this.familyMemberId);
+
+  @override
+  List<Object> get props => [familyMemberId];
+}
+
 // Person State
 class PersonState extends Equatable {
   final List<PersonModel> people;
@@ -58,39 +85,17 @@ class PersonState extends Equatable {
 // Person Bloc
 class PersonBloc extends Bloc<PersonEvent, PersonState> {
   final UserStatusService _userStatusService = UserStatusService();
+  final FamilyService _familyService = FamilyService();
 
   PersonBloc() : super(const PersonState([])) {
     on<LoadPersons>((event, emit) {
-      // Load initial data from Firebase
-      _loadUsersFromFirebase(emit);
+      // Load family members with their status
+      _loadFamilyMembersWithStatus(emit);
     });
 
-    on<UpdatePersonStatus>((event, emit) async {
-      try {
-        // Update status in Firebase
-        await _userStatusService.saveUserStatus(event.newStatus == 'Safe');
-
-        // Reload users from Firebase to get updated data
-        _loadUsersFromFirebase(emit);
-      } catch (e) {
-        print('Error updating person status: $e');
-        // Still emit current state if there's an error
-        emit(state);
-      }
-    });
-
-    on<UpdateUserStatusInFirebase>((event, emit) async {
-      try {
-        // Update current user status in Firebase
-        await _userStatusService.saveUserStatus(event.isSafe);
-
-        // Reload users from Firebase to get updated data
-        _loadUsersFromFirebase(emit);
-      } catch (e) {
-        print('Error updating user status in Firebase: $e');
-        // Still emit current state if there's an error
-        emit(state);
-      }
+    on<LoadFamilyMembers>((event, emit) {
+      // Load family members with their status
+      _loadFamilyMembersWithStatus(emit);
     });
 
     on<AddCurrentUser>((event, emit) {
@@ -114,24 +119,53 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
         }).toList();
         emit(PersonState(updatedPeople));
       }
-        });
-  }
+   });
 
-  void _loadUsersFromFirebase(Emitter<PersonState> emit) async {
+   on<AddFamilyMember>((event, emit) async {
+     try {
+       await _familyService.addFamilyMember(
+         event.memberUserId,
+         event.name,
+         event.relationship,
+         gender: event.gender,
+       );
+
+       // Reload family members after adding
+       _loadFamilyMembersWithStatus(emit);
+     } catch (e) {
+       print('Error adding family member: $e');
+       emit(state);
+     }
+   });
+
+   on<RemoveFamilyMember>((event, emit) async {
+     try {
+       await _familyService.removeFamilyMember(event.familyMemberId);
+
+       // Reload family members after removing
+       _loadFamilyMembersWithStatus(emit);
+     } catch (e) {
+       print('Error removing family member: $e');
+       emit(state);
+     }
+   });
+ }
+
+  void _loadFamilyMembersWithStatus(Emitter<PersonState> emit) async {
     try {
-      // Listen to real-time updates from Firebase
-      final usersStream = _userStatusService.getAllUserStatuses();
+      // Listen to real-time updates from Firebase for family members
+      final familyMembersStream = _familyService.getFamilyMembersWithStatus();
 
       await emit.forEach(
-        usersStream,
-        onData: (users) => PersonState(users),
+        familyMembersStream,
+        onData: (familyMembers) => PersonState(familyMembers),
         onError: (error, stackTrace) {
-          print('Error loading users from Firebase: $error');
+          print('Error loading family members from Firebase: $error');
           return const PersonState([]);
         },
       );
     } catch (e) {
-      print('Error setting up Firebase stream: $e');
+      print('Error setting up Firebase stream for family members: $e');
       emit(const PersonState([]));
     }
   }

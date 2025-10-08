@@ -11,6 +11,7 @@ import '../model/PersonModel.dart';
 import '../services/UserStatusService.dart';
 import '../widgets/CustomText.dart';
 import '../widgets/SafeCardWidget.dart';
+import '../widgets/AddFamilyMemberDialog.dart';
 
 class MyStatusView extends StatefulWidget {
   const MyStatusView({super.key});
@@ -308,9 +309,63 @@ class _MyStatusViewState extends State<MyStatusView> {
               child: Center(
                 child: Column(
                   children: [
+                    // Header with add family member button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const CustomText(
+                          text: 'Family & Friends',
+                          fontFamily: 'GoogleSansCode',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                            textAlign: TextAlign.left,
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => const AddFamilyMemberDialog(),
+                            );
+                          },
+                          icon: const Icon(Icons.person_add, color: Colors.white),
+                          label: const CustomText(
+                            text: 'Add',
+                            fontFamily: 'GoogleSansCode',
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600, textAlign: TextAlign.left
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorHelpers.safeColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
                     Expanded(
                       child: BlocBuilder<PersonBloc, PersonState>(
                         builder: (context, state) {
+                          if (state.people.isEmpty) {
+                            return const Center(
+                              child: CustomText(
+                                text: 'No family members added yet.\nTap "Add" to add your first family member.',
+                                fontFamily: 'GoogleSansCode',
+                                fontSize: 16,
+                                color: Colors.grey,
+                                textAlign: TextAlign.center, fontWeight: FontWeight.w600,
+                              ),
+                            );
+                          }
+
                           return ListView.builder(
                             itemCount: state.people.length,
                             itemBuilder: (context, index) {

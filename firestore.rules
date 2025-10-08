@@ -1,0 +1,58 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidUserData() {
+      return request.resource.data.keys().hasAll(['userId', 'memberUserId', 'name', 'relationship', 'addedDate']);
+    }
+
+    // Users collection - users can read/write their own data
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+      allow read: if isAuthenticated(); // Allow reading other users' basic info for family search
+    }
+
+    // User status collection - users can read all, write their own
+    match /user_status/{userId} {
+      allow read: if isAuthenticated(); // Allow reading all user statuses for family member status updates
+      allow write: if isOwner(userId);
+    }
+
+    // Family members collection - users can only manage their own family relationships
+    match /family_members/{document} {
+      // Users can read/write their own family relationships
+      allow read, write: if isAuthenticated() &&
+        exists(/databases/$(database)/documents/family_members/$(document)) &&
+        get(/databases/$(database)/documents/family_members/$(document)).data.userId == request.auth.uid;
+
+      // Users can create new family relationships for themselves
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid &&
+        isValidUserData();
+
+      // Users can delete their own family relationships
+      allow delete: if isAuthenticated() &&
+        exists(/databases/$(database)/documents/family_members/$(document)) &&
+        resource.data.userId == request.auth.uid;
+    }
+
+    // Emergency contacts collection (if exists) - read access for authenticated users
+    match /emergency_contacts/{document} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    // Default deny rule
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
