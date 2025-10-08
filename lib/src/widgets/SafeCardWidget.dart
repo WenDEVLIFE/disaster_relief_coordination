@@ -7,8 +7,9 @@ import 'CustomText.dart';
 
 class SafeCardWidget extends StatelessWidget {
   final PersonModel person;
+  final VoidCallback? onDelete;
 
-  const SafeCardWidget({Key? key, required this.person}) : super(key: key);
+  const SafeCardWidget({Key? key, required this.person, this.onDelete}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,9 @@ class SafeCardWidget extends StatelessWidget {
               radius: 10,
               color: person.status == 'Safe'
                   ? ColorHelpers.safeColor
-                  : Colors.red,
+                  : person.status == 'Unknown'
+                      ? Colors.grey
+                      : Colors.red,
             ),
             const SizedBox(width: 8),
             CustomText(
@@ -42,12 +45,47 @@ class SafeCardWidget extends StatelessWidget {
               fontSize: 18,
               color: person.status == 'Safe'
                   ? ColorHelpers.safeColor
-                  : Colors.red,
+                  : person.status == 'Unknown'
+                      ? Colors.grey
+                      : Colors.red,
               fontWeight: FontWeight.w700,
               textAlign: TextAlign.left,
             ),
           ],
         ),
+        trailing: onDelete != null
+            ? IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: () {
+                  // Show confirmation dialog
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Remove Family Member'),
+                        content: Text('Are you sure you want to remove ${person.name} from your family list?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              onDelete!();
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.red,
+                            ),
+                            child: const Text('Remove'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              )
+            : null,
       ),
     );
   }

@@ -41,7 +41,28 @@ class FamilyService {
     await _familyCollection.add(familyMemberData);
   }
 
-  /// Remove a family member
+  /// Remove a family member by user ID
+  Future<void> removeFamilyMemberByUserId(String memberUserId) async {
+    if (_currentUserId == null) {
+      throw Exception('User not authenticated');
+    }
+
+    try {
+      final querySnapshot = await _familyCollection
+          .where('userId', isEqualTo: _currentUserId)
+          .where('memberUserId', isEqualTo: memberUserId)
+          .get();
+
+      for (var doc in querySnapshot.docs) {
+        await doc.reference.delete();
+      }
+    } catch (e) {
+      print('Error removing family member: $e');
+      rethrow;
+    }
+  }
+
+  /// Remove a family member by document ID
   Future<void> removeFamilyMember(String familyMemberId) async {
     if (_currentUserId == null) {
       throw Exception('User not authenticated');

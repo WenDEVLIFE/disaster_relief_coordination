@@ -73,6 +73,15 @@ class RemoveFamilyMember extends PersonEvent {
   List<Object> get props => [familyMemberId];
 }
 
+class RemoveFamilyMemberByUserId extends PersonEvent {
+  final String memberUserId;
+
+  const RemoveFamilyMemberByUserId(this.memberUserId);
+
+  @override
+  List<Object> get props => [memberUserId];
+}
+
 // Person State
 class PersonState extends Equatable {
   final List<PersonModel> people;
@@ -146,6 +155,18 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
        _loadFamilyMembersWithStatus(emit);
      } catch (e) {
        print('Error removing family member: $e');
+       emit(state);
+     }
+   });
+
+   on<RemoveFamilyMemberByUserId>((event, emit) async {
+     try {
+       await _familyService.removeFamilyMemberByUserId(event.memberUserId);
+
+       // Reload family members after removing
+       _loadFamilyMembersWithStatus(emit);
+     } catch (e) {
+       print('Error removing family member by user ID: $e');
        emit(state);
      }
    });

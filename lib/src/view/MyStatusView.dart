@@ -370,7 +370,12 @@ class _MyStatusViewState extends State<MyStatusView> {
                             itemCount: state.people.length,
                             itemBuilder: (context, index) {
                               final person = state.people[index];
-                              return SafeCardWidget(person: person);
+                              return SafeCardWidget(
+                                person: person,
+                                onDelete: person.name != "You" ? () {
+                                  context.read<PersonBloc>().add(RemoveFamilyMemberByUserId(person.id));
+                                } : null,
+                              );
                             },
                           );
                         },
