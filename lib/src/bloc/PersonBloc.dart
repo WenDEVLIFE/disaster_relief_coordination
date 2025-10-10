@@ -85,10 +85,11 @@ class RemoveFamilyMemberByUserId extends PersonEvent {
 // Person State
 class PersonState extends Equatable {
   final List<PersonModel> people;
-  const PersonState(this.people);
+  final PersonModel? currentUser;
+  const PersonState(this.people, {this.currentUser});
 
   @override
-  List<Object> get props => [people];
+  List<Object> get props => [people, currentUser ?? PersonModel(id: '', name: '', status: '', gender: '')];
 }
 
 // Person Bloc
@@ -96,7 +97,7 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
   final UserStatusService _userStatusService = UserStatusService();
   final FamilyService _familyService = FamilyService();
 
-  PersonBloc() : super(const PersonState([])) {
+  PersonBloc() : super(const PersonState([], currentUser: null)) {
     on<LoadPersons>((event, emit) {
       // Load family members with their status
       _loadFamilyMembersWithStatus(emit);
@@ -109,25 +110,9 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
 
     on<AddCurrentUser>((event, emit) {
       final currentState = state;
-      final people = currentState.people;
-      final currentUserIndex = people.indexWhere(
-        (person) => person.id == event.currentUser.id,
-      );
-
-      if (currentUserIndex == -1) {
-        // Add current user to the list
-        final updatedPeople = [...people, event.currentUser];
-        emit(PersonState(updatedPeople));
-      } else {
-        // Update existing current user
-        final updatedPeople = people.map((person) {
-          if (person.id == event.currentUser.id) {
-            return event.currentUser;
-          }
-          return person;
-        }).toList();
-        emit(PersonState(updatedPeople));
-      }
+      final people = currentState.people.where((p) => p.id != event.currentUser.id).toList(); // Remove existing if any
+      final updatedPeople = [...people, event.currentUser];
+      emit(PersonState(updatedPeople, currentUser: event.currentUser));
    });
 
    on<AddFamilyMember>((event, emit) async {
@@ -179,15 +164,23 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
 
       await emit.forEach(
         familyMembersStream,
-        onData: (familyMembers) => PersonState(familyMembers),
+        onData: (familyMembers) {
+          final allPeople = [...familyMembers];
+          if (state.currentUser != null) {
+            // Remove any existing current user from familyMembers to avoid duplicate
+            allPeople.removeWhere((p) => p.id == state.currentUser!.id);
+            allPeople.add(state.currentUser!);
+          }
+          return PersonState(allPeople, currentUser: state.currentUser);
+        },
         onError: (error, stackTrace) {
           print('Error loading family members from Firebase: $error');
-          return const PersonState([]);
+          return PersonState([], currentUser: state.currentUser);
         },
       );
     } catch (e) {
       print('Error setting up Firebase stream for family members: $e');
-      emit(const PersonState([]));
+      emit(PersonState([], currentUser: state.currentUser));
     }
   }
 }

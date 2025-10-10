@@ -78,16 +78,6 @@ class _AddFamilyMemberDialogState extends State<AddFamilyMemberDialog> {
     });
 
     try {
-      // Check if already a family member
-      final isAlreadyMember = await _familyService.isFamilyMember(user.id);
-      if (isAlreadyMember) {
-        _showError('This user is already in your family list');
-        setState(() {
-          _isAdding = false;
-        });
-        return;
-      }
-
       await _familyService.addFamilyMember(
         user.id,
         user.name,
@@ -99,7 +89,7 @@ class _AddFamilyMemberDialogState extends State<AddFamilyMemberDialog> {
       context.read<PersonBloc>().add(const LoadPersons());
 
       Navigator.of(context).pop(); // Close dialog
-      _showSuccess('Family member added successfully');
+      _showSuccess('Family member added or updated successfully');
     } catch (e) {
       print('Error adding family member: $e');
       _showError('Failed to add family member. Please try again.');

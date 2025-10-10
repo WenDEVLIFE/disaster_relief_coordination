@@ -28,17 +28,19 @@ class FamilyService {
       throw Exception('User not authenticated');
     }
 
+    final docId = '${_currentUserId}_$memberUserId'; // Unique ID based on relationship
+
     final familyMemberData = {
       'userId': _currentUserId, // The current user who is adding the family member
       'memberUserId': memberUserId, // The family member's user ID
       'name': name,
       'relationship': relationship,
-      'addedDate': FieldValue.serverTimestamp(),
+      'addedDate': DateTime.now().toIso8601String(), // Use current time instead of server timestamp
       'gender': gender,
     };
 
-    // Create a unique document ID for this family relationship
-    await _familyCollection.add(familyMemberData);
+    // Use set with merge to update if exists or create new
+    await _familyCollection.doc(docId).set(familyMemberData, SetOptions(merge: true));
   }
 
   /// Remove a family member by user ID
@@ -48,14 +50,8 @@ class FamilyService {
     }
 
     try {
-      final querySnapshot = await _familyCollection
-          .where('userId', isEqualTo: _currentUserId)
-          .where('memberUserId', isEqualTo: memberUserId)
-          .get();
-
-      for (var doc in querySnapshot.docs) {
-        await doc.reference.delete();
-      }
+      final docId = '${_currentUserId}_$memberUserId';
+      await _familyCollection.doc(docId).delete();
     } catch (e) {
       print('Error removing family member: $e');
       rethrow;
