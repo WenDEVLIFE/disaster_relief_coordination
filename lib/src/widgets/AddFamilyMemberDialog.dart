@@ -85,8 +85,7 @@ class _AddFamilyMemberDialogState extends State<AddFamilyMemberDialog> {
         gender: user.gender,
       );
 
-      // Refresh the person list
-      context.read<PersonBloc>().add(const LoadPersons());
+      // The stream will automatically update with the new member
 
       Navigator.of(context).pop(); // Close dialog
       _showSuccess('Family member added or updated successfully');

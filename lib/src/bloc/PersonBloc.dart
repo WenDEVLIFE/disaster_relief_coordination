@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../model/PersonModel.dart';
-import '../model/FamilyMemberModel.dart';
-import '../services/UserStatusService.dart';
 import '../services/FamilyService.dart';
 
 // Person Events
@@ -94,7 +92,6 @@ class PersonState extends Equatable {
 
 // Person Bloc
 class PersonBloc extends Bloc<PersonEvent, PersonState> {
-  final UserStatusService _userStatusService = UserStatusService();
   final FamilyService _familyService = FamilyService();
 
   PersonBloc() : super(const PersonState([], currentUser: null)) {
@@ -102,12 +99,12 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
       // Load family members with their status
       _loadFamilyMembersWithStatus(emit);
     });
-
+    
     on<LoadFamilyMembers>((event, emit) {
       // Load family members with their status
       _loadFamilyMembersWithStatus(emit);
     });
-
+    
     on<AddCurrentUser>((event, emit) {
       final currentState = state;
       final people = currentState.people.where((p) => p.id != event.currentUser.id).toList(); // Remove existing if any
@@ -124,8 +121,7 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
          gender: event.gender,
        );
 
-       // Reload family members after adding
-       _loadFamilyMembersWithStatus(emit);
+       // The stream will automatically update with the new member
      } catch (e) {
        print('Error adding family member: $e');
        emit(state);
@@ -136,8 +132,7 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
      try {
        await _familyService.removeFamilyMember(event.familyMemberId);
 
-       // Reload family members after removing
-       _loadFamilyMembersWithStatus(emit);
+       // The stream will automatically update after removal
      } catch (e) {
        print('Error removing family member: $e');
        emit(state);
@@ -145,42 +140,62 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
    });
 
    on<RemoveFamilyMemberByUserId>((event, emit) async {
+     print('=== PERSON BLOC: RemoveFamilyMemberByUserId event received ===');
+     print('Member user ID to remove: ${event.memberUserId}');
+     
      try {
+       print('Calling FamilyService.removeFamilyMemberByUserId...');
        await _familyService.removeFamilyMemberByUserId(event.memberUserId);
+       print('FamilyService.removeFamilyMemberByUserId completed successfully');
 
-       // Reload family members after removing
-       _loadFamilyMembersWithStatus(emit);
+       // The stream will automatically update after removal
+       print('Stream should automatically update with new data');
      } catch (e) {
-       print('Error removing family member by user ID: $e');
+       print('ERROR in PersonBloc.RemoveFamilyMemberByUserId: $e');
+       print('Error type: ${e.runtimeType}');
+       print('Error details: ${e.toString()}');
        emit(state);
      }
+     print('=== PERSON BLOC: RemoveFamilyMemberByUserId event completed ===');
    });
  }
 
-  void _loadFamilyMembersWithStatus(Emitter<PersonState> emit) async {
-    try {
-      // Listen to real-time updates from Firebase for family members
-      final familyMembersStream = _familyService.getFamilyMembersWithStatus();
+ void _loadFamilyMembersWithStatus(Emitter<PersonState> emit) {
+   print('=== PERSON BLOC: _loadFamilyMembersWithStatus called ===');
+   try {
+     // Listen to real-time updates from Firebase for family members
+     final familyMembersStream = _familyService.getFamilyMembersWithStatus();
+     print('Family members stream obtained');
 
-      await emit.forEach(
-        familyMembersStream,
-        onData: (familyMembers) {
-          final allPeople = [...familyMembers];
-          if (state.currentUser != null) {
-            // Remove any existing current user from familyMembers to avoid duplicate
-            allPeople.removeWhere((p) => p.id == state.currentUser!.id);
-            allPeople.add(state.currentUser!);
-          }
-          return PersonState(allPeople, currentUser: state.currentUser);
-        },
-        onError: (error, stackTrace) {
-          print('Error loading family members from Firebase: $error');
-          return PersonState([], currentUser: state.currentUser);
-        },
-      );
-    } catch (e) {
-      print('Error setting up Firebase stream for family members: $e');
-      emit(PersonState([], currentUser: state.currentUser));
-    }
-  }
+     emit.onEach(
+       familyMembersStream,
+       onData: (familyMembers) {
+         print('=== PERSON BLOC: Stream data received ===');
+         print('Family members count: ${familyMembers.length}');
+         for (var member in familyMembers) {
+           print('Member: ${member.name} (${member.id}) - Status: ${member.status}');
+         }
+         
+         final allPeople = [...familyMembers];
+         if (state.currentUser != null) {
+           // Remove any existing current user from familyMembers to avoid duplicate
+           allPeople.removeWhere((p) => p.id == state.currentUser!.id);
+           allPeople.add(state.currentUser!);
+         }
+         
+         print('Emitting new state with ${allPeople.length} people');
+         emit(PersonState(allPeople, currentUser: state.currentUser));
+       },
+       onError: (error, stackTrace) {
+         print('ERROR in PersonBloc stream: $error');
+         print('Stack trace: $stackTrace');
+         emit(PersonState([], currentUser: state.currentUser));
+       },
+     );
+   } catch (e) {
+     print('ERROR setting up Firebase stream for family members: $e');
+     emit(PersonState([], currentUser: state.currentUser));
+   }
+   print('=== PERSON BLOC: _loadFamilyMembersWithStatus completed ===');
+ }
 }

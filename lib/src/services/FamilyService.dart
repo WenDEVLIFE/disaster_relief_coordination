@@ -45,17 +45,43 @@ class FamilyService {
 
   /// Remove a family member by user ID
   Future<void> removeFamilyMemberByUserId(String memberUserId) async {
+    print('=== FAMILY SERVICE DEBUG START ===');
+    print('Current user ID: $_currentUserId');
+    print('Member user ID to delete: $memberUserId');
+    
     if (_currentUserId == null) {
+      print('ERROR: User not authenticated');
       throw Exception('User not authenticated');
     }
 
     try {
       final docId = '${_currentUserId}_$memberUserId';
-      await _familyCollection.doc(docId).delete();
+      print('Document ID to delete: $docId');
+      
+      // Check if document exists before deleting
+      final docRef = _familyCollection.doc(docId);
+      final docSnapshot = await docRef.get();
+      print('Document exists before deletion: ${docSnapshot.exists}');
+      
+      if (docSnapshot.exists) {
+        print('Document data before deletion: ${docSnapshot.data()}');
+      }
+      
+      print('Attempting to delete document...');
+      await docRef.delete();
+      print('Document deleted successfully');
+      
+      // Verify deletion
+      final verifySnapshot = await docRef.get();
+      print('Document exists after deletion: ${verifySnapshot.exists}');
+      
     } catch (e) {
-      print('Error removing family member: $e');
+      print('ERROR in FamilyService.removeFamilyMemberByUserId: $e');
+      print('Error type: ${e.runtimeType}');
+      print('Error details: ${e.toString()}');
       rethrow;
     }
+    print('=== FAMILY SERVICE DEBUG END ===');
   }
 
   /// Remove a family member by document ID
@@ -134,11 +160,16 @@ class FamilyService {
       return Stream.value([]);
     }
 
+    print('=== STREAM DEBUG: Setting up family members stream for user: $_currentUserId ===');
+
     // First, get the current family members
     return _familyCollection
         .where('userId', isEqualTo: _currentUserId)
         .snapshots()
         .asyncMap((familySnapshot) async {
+          print('=== STREAM DEBUG: Family snapshot received ===');
+          print('Snapshot docs count: ${familySnapshot.docs.length}');
+          print('Snapshot metadata: ${familySnapshot.metadata}');
       if (familySnapshot.docs.isEmpty) {
         return [];
       }
@@ -205,6 +236,10 @@ class FamilyService {
         }
       }
 
+      print('=== STREAM DEBUG: Returning ${familyWithStatus.length} family members ===');
+      for (var member in familyWithStatus) {
+        print('Member: ${member.name} (${member.id}) - Status: ${member.status}');
+      }
       return familyWithStatus;
     });
   }

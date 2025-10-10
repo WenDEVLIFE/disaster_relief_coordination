@@ -1,17 +1,17 @@
 import 'package:disaster_relief_coordination/src/helpers/SvgHelpers.dart';
 import 'package:disaster_relief_coordination/src/widgets/CustomButton.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 
-import '../bloc/PersonBloc.dart';
 import '../helpers/ColorHelpers.dart';
 import '../model/PersonModel.dart';
 import '../services/UserStatusService.dart';
 import '../widgets/CustomText.dart';
 import '../widgets/SafeCardWidget.dart';
 import '../widgets/AddFamilyMemberDialog.dart';
+import '../bloc/PersonBloc.dart';
 
 class MyStatusView extends StatefulWidget {
   const MyStatusView({super.key});
@@ -25,13 +25,11 @@ class _MyStatusViewState extends State<MyStatusView> {
   String _lastUpdated = 'Never';
   PersonModel? _currentUser;
   StreamSubscription<bool>? _statusSubscription;
-  StreamSubscription<String>? _lastUpdatedSubscription;
 
   @override
   void initState() {
     super.initState();
     _loadSavedStatus();
-    context.read<PersonBloc>().add(const LoadPersons());
     _setupRealTimeListeners();
   }
 
@@ -46,7 +44,7 @@ class _MyStatusViewState extends State<MyStatusView> {
         if (mounted) {
           setState(() {
             _isSafe = isSafe;
-            _updateCurrentUserInList();
+            _updateCurrentUser();
           });
 
           // Update last updated timestamp when status changes
@@ -77,7 +75,6 @@ class _MyStatusViewState extends State<MyStatusView> {
     try {
       final userStatusService = UserStatusService();
       final userStatusData = await userStatusService.getUserStatusWithGender();
-      final userProfile = await userStatusService.getUserProfile();
 
       setState(() {
         if (userStatusData != null) {
@@ -127,10 +124,10 @@ class _MyStatusViewState extends State<MyStatusView> {
       final currentGender = _currentUser?.gender ?? 'Other';
       await userStatusService.saveUserStatus(_isSafe, gender: currentGender);
 
-      // Update current user in the list
+      // Update current user
       setState(() {
         _lastUpdated = _getCurrentDateTime();
-        _updateCurrentUserInList();
+        _updateCurrentUser();
       });
     } catch (e) {
       print('Error saving status: $e');
@@ -186,7 +183,7 @@ class _MyStatusViewState extends State<MyStatusView> {
     }
   }
 
-  void _updateCurrentUserInList() async {
+  void _updateCurrentUser() async {
     try {
       final userStatusService = UserStatusService();
       final currentUserId = userStatusService.currentUserId;
@@ -215,10 +212,9 @@ class _MyStatusViewState extends State<MyStatusView> {
         );
       }
 
-      // Add current user to the list using the BLoC event
-      context.read<PersonBloc>().add(AddCurrentUser(_currentUser!));
+      setState(() {});
     } catch (e) {
-      print('Error updating current user in list: $e');
+      print('Error updating current user: $e');
     }
   }
 
@@ -227,7 +223,9 @@ class _MyStatusViewState extends State<MyStatusView> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
+    return BlocProvider(
+      create: (context) => PersonBloc()..add(LoadFamilyMembers()),
+      child: Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -354,26 +352,53 @@ class _MyStatusViewState extends State<MyStatusView> {
                     Expanded(
                       child: BlocBuilder<PersonBloc, PersonState>(
                         builder: (context, state) {
-                          if (state.people.isEmpty) {
+                          print('=== BLOC BUILDER DEBUG ===');
+                          print('Current state people count: ${state.people.length}');
+                          print('Current user: ${state.currentUser?.name}');
+                          
+                          final allPeople = [...state.people];
+
+                          // Add current user if exists
+                          if (_currentUser != null) {
+                            allPeople.removeWhere((p) => p.id == _currentUser!.id);
+                            allPeople.add(_currentUser!);
+                          }
+
+                          if (allPeople.isEmpty) {
                             return const Center(
                               child: CustomText(
                                 text: 'No family members added yet.\nTap "Add" to add your first family member.',
                                 fontFamily: 'GoogleSansCode',
                                 fontSize: 16,
                                 color: Colors.grey,
-                                textAlign: TextAlign.center, fontWeight: FontWeight.w600,
+                                textAlign: TextAlign.center,
+                                fontWeight: FontWeight.w600,
                               ),
                             );
                           }
 
                           return ListView.builder(
-                            itemCount: state.people.length,
+                            itemCount: allPeople.length,
                             itemBuilder: (context, index) {
-                              final person = state.people[index];
+                              final person = allPeople[index];
                               return SafeCardWidget(
                                 person: person,
                                 onDelete: person.name != "You" ? () {
+                                  print('=== BLOC DELETION DEBUG START ===');
+                                  print('Attempting to delete person: ${person.name} with ID: ${person.id}');
+                                  
+                                  // Use BLoC event for deletion
                                   context.read<PersonBloc>().add(RemoveFamilyMemberByUserId(person.id));
+                                  
+                                  // Show success message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('${person.name} removed successfully'),
+                                      backgroundColor: Colors.green,
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                  print('=== BLOC DELETION DEBUG END ===');
                                 } : null,
                               );
                             },
@@ -397,6 +422,7 @@ class _MyStatusViewState extends State<MyStatusView> {
             ),
           ),
         ],
+      ),
       ),
     );
   }
